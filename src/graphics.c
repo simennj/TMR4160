@@ -160,9 +160,10 @@ FloatVectors *createFloatVectorFromFile(const char *filename) {
 
     for (int i = 0; i < verts->count * 3; i += 3) {
         fgets(line, VECTOR_BUFFER_SIZE, file);
-        verts->array[i] = strtof(line, &rest);
-        verts->array[i + 1] = strtof(rest, &rest);
-        verts->array[i + 2] = strtof(rest, &rest); //0 if only 2 coordinates
+        rest = strtok(line, "#"); // everything after the first # is a comment
+        for (int j = 0; j < 3; ++j) { // the third coordinate becomes 0 if not defined
+            verts->array[i + j] = strtof(rest, &rest);
+        }
     }
     return verts;
 }
@@ -179,9 +180,10 @@ IntVectors *createIntVectorFromFile(const char *filename) {
 
     for (int i = 0; i < verts->count * 3; i += 3) {
         fgets(line, VECTOR_BUFFER_SIZE, file);
-        verts->array[i] = strtol(line, &rest, 10);
-        verts->array[i + 1] = strtol(rest, &rest, 10);
-        verts->array[i + 2] = strtol(rest, &rest, 10); //0 if only 2 coordinates
+        rest = strtok(line, "#"); // everything after the first # is a comment
+        for (int j = 0; j < 3; ++j) { // the third coordinate becomes 0 if not defined
+            verts->array[i + j] = strtol(rest, &rest, 10);
+        }
     }
     return verts;
 }
