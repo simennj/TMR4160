@@ -3,12 +3,6 @@
 #include <GLFW/glfw3.h>
 
 
-void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
-
-const GLchar *getShaderSource(const char *filename);
-
-const GLuint WIDTH = 800, HEIGHT = 600;
-
 typedef struct {
     int count;
     GLfloat *array;
@@ -22,6 +16,16 @@ typedef struct {
 FloatVectors *createFloatVectorFromFile(const char *filename);
 
 IntVectors *createIntVectorFromFile(const char *filename);
+
+void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
+
+const GLchar *getShaderSource(const char *filename);
+
+void bindPolygons(const FloatVectors *verts, const IntVectors *indic);
+
+const GLuint WIDTH = 800, HEIGHT = 600;
+
+GLuint VBO, VAO, EBO;
 
 int test() {
     glfwInit();
@@ -92,27 +96,10 @@ int test() {
 
     IntVectors *indic = createIntVectorFromFile("indices.txt");
 
-    GLuint VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
-    // Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * verts->count * 3, verts->array, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLint) * indic->count * 3, indic->array, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid *) 0);
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER,
-                 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
-
-    glBindVertexArray(
-            0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
+    bindPolygons(verts, indic);
 
 
     // Uncommenting this call will result in wireframe polygons.
@@ -136,6 +123,27 @@ int test() {
     glDeleteBuffers(1, &EBO);
     glfwTerminate();
     return 0;
+}
+
+void bindPolygons(const FloatVectors *verts, const IntVectors *indic) {// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * verts->count * 3, verts->array, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLint) * indic->count * 3, indic->array, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid *) 0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER,
+                 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
+
+    glBindVertexArray(
+            0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
+
+
 }
 
 const int VECTOR_BUFFER_SIZE = 20;
@@ -200,6 +208,8 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
     else if (key == GLFW_KEY_R && action == GLFW_PRESS) {
-
+        FloatVectors *verts = createFloatVectorFromFile("vertices.txt");
+        IntVectors *indic = createIntVectorFromFile("indices.txt");
+        bindPolygons(verts, indic);
     }
 }
