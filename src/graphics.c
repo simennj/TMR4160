@@ -31,6 +31,8 @@ const GLuint WIDTH = 800, HEIGHT = 600;
 
 GLuint VBO, VAO, EBO;
 
+int triangles;
+
 int test() {
     glfwInit();
     // Set required options for GLFW
@@ -58,6 +60,7 @@ int test() {
     FloatVectors *verts = createFloatVectorFromFile("vertices.txt");
 
     IntVectors *indic = createIntVectorFromFile("indices.txt");
+    triangles = indic->count;
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -76,7 +79,7 @@ int test() {
 
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
         glfwSwapBuffers(window);
