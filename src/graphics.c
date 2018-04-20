@@ -17,11 +17,15 @@ FloatVectors *createFloatVectorFromFile(const char *filename);
 
 IntVectors *createIntVectorFromFile(const char *filename);
 
+GLuint shaderProgram;
+
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
 
 const GLchar *getShaderSource(const char *filename);
 
 void bindPolygons(const FloatVectors *verts, const IntVectors *indic);
+
+GLuint loadShaders();
 
 const GLuint WIDTH = 800, HEIGHT = 600;
 
@@ -49,8 +53,42 @@ int test() {
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
 
+    shaderProgram = loadShaders();
 
-    // Load vertex shader
+    FloatVectors *verts = createFloatVectorFromFile("vertices.txt");
+
+    IntVectors *indic = createIntVectorFromFile("indices.txt");
+
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+    bindPolygons(verts, indic);
+
+
+    // Uncommenting this call will result in wireframe polygons.
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    while (!glfwWindowShouldClose(window)) {
+        glfwPollEvents();
+
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
+
+        glfwSwapBuffers(window);
+    }
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
+    glfwTerminate();
+    return 0;
+}
+
+GLuint loadShaders() {// Load vertex shader
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     const GLchar *vertexShaderSource = getShaderSource("vertexShader.glsl");
     glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
@@ -90,39 +128,7 @@ int test() {
     }
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
-
-
-    FloatVectors *verts = createFloatVectorFromFile("vertices.txt");
-
-    IntVectors *indic = createIntVectorFromFile("indices.txt");
-
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-    bindPolygons(verts, indic);
-
-
-    // Uncommenting this call will result in wireframe polygons.
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-    while (!glfwWindowShouldClose(window)) {
-        glfwPollEvents();
-
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
-
-        glfwSwapBuffers(window);
-    }
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
-    glfwTerminate();
-    return 0;
+    return shaderProgram;
 }
 
 void bindPolygons(const FloatVectors *verts, const IntVectors *indic) {// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
@@ -210,6 +216,7 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
     else if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+        shaderProgram = loadShaders();
         FloatVectors *verts = createFloatVectorFromFile("vertices.txt");
         IntVectors *indic = createIntVectorFromFile("indices.txt");
         bindPolygons(verts, indic);
