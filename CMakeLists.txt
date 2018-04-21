@@ -9,7 +9,7 @@ INCLUDE_DIRECTORIES(include)
 
 LINK_DIRECTORIES(external)
 
-add_executable(TMR4160 src/main.c src/graphics.c src/glad.c)
+add_executable(TMR4160 src/main.c src/graphics.c src/glad.c src/fake_boat.c src/fake_boat.h)
 
 TARGET_LINK_LIBRARIES(TMR4160
         phidget22
