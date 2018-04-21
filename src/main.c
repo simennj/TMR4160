@@ -4,11 +4,18 @@
 
 #include "fake_boat.h"
 
+int loadConstants(const char *filename, double *k_p, double *k_i, double *k_d) {
+    FILE *file = fopen(filename, "r");
+    int res = fscanf(file, "%lf %lf %lf", k_p, k_i, k_d);
+    fclose(file);
+    return res;
+}
+
 int main(int argc, char **argv) {
 
-    double k_p = 20;
-    double k_i = .5;
-    double k_d = .01;
+    double k_p, k_i, k_d;
+    loadConstants("constants.txt", &k_p, &k_i, &k_d);
+    printf("K_p: %lf, K_i: %lf, K_d: %lf\n", k_p, k_i, k_d);
 
     double target_position = 0;
     double accumulated_displacement = 0;
