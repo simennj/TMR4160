@@ -1,9 +1,9 @@
 #ifndef TMR4160_FAKE_BOAT_H
 #define TMR4160_FAKE_BOAT_H
 
-double getFakeBoatPosition();
+double getBoatPosition();
 
-void updateFakeBoat(double dt, double motor_force);
+void updateBoat(double dt, double motor_force);
 
 void printFakeBoatState();
 

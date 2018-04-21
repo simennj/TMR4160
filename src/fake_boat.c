@@ -8,11 +8,11 @@ double velocity = 0;
 double acceleration = 0;
 
 
-double getFakeBoatPosition() {
+double getBoatPosition() {
     return position;
 }
 
-void updateFakeBoat(double dt, double motor_force) {
+void updateBoat(double dt, double motor_force) {
     acceleration = motor_force - drag * velocity;
     velocity = velocity + acceleration * dt;
     position = position + velocity * dt;
