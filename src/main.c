@@ -1,51 +1,34 @@
 #include <stdio.h>
-#include <stdlib.h>
+
 #include <time.h>
 
-#include <phidget22.h>
-#include "graphics.h"
-
-
-PhidgetRCServoHandle servoHandle;
-PhidgetVoltageInputHandle voltageInputHandle;
-
-int initPhidget();
-
-int initPhidgetSensor();
-
-int initPhidgetMotor();
-
-double min_voltage, max_voltage, middle_voltage;
-double max_motor = 170, min_motor = 20;
-
-static void CCONV
-onVoltageChangeHandler(PhidgetVoltageInputHandle ch, void *ctx, double voltage) {
-    printf("Voltage Changed: %.4f\n", voltage);
-    double position = (voltage-middle_voltage)/(max_voltage-min_voltage);
-    printf("calculated position %f\n", position);
-    double motor_input = position * 150 + 90;
-    printf("Setting motor input to %f\n", motor_input);
-//    fflush(stdout);
-    if (PhidgetRCServo_setTargetPosition(servoHandle, motor_input) != EPHIDGET_OK) {
-        printf("Motor input set to %f\n", motor_input);
-    }
-}
+#include "fake_boat.h"
 
 int main(int argc, char **argv) {
 
-    test();
+    double k_p = 1;
+    double k_i = 1;
+    double k_d = 1;
 
-//    int64_t delta_time;
-//    int64_t now_time;
-//    int64_t last_time = clock();
-//    while (1) {
-//        now_time = clock();
-//        delta_time = now_time-last_time;
-//        if (delta_time > 0) {
-//            last_time = now_time;
-//            displacement = correct_position - get_position();
-//        }
-//    }
+    double target_position = 0;
+
+    double dt;
+    struct timespec now_time, last_time;
+    clock_gettime(CLOCK_MONOTONIC, &last_time);
+    for (int i = 0; i < 1000;) {
+        clock_gettime(CLOCK_MONOTONIC, &now_time);
+        dt = now_time.tv_sec - last_time.tv_sec + (now_time.tv_nsec - last_time.tv_nsec) / 1E9;
+        if (dt > .01) {
+            i++;
+            last_time = now_time;
+            double displacement = target_position - getFakeBoatPosition();
+            double motor_force = k_p * displacement;
+            updateFakeBoat(dt, motor_force);
+            if (i % 5 == 0) {
+                printFakeBoatState();
+            }
+        }
+    }
 
 //    int res;
 //    res = initPhidget();
@@ -59,96 +42,3 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-void closePhidget() {
-}
-
-int initPhidget() {
-    int res;
-
-    PhidgetLog_enable(PHIDGET_LOG_INFO, NULL);
-
-    res = initPhidgetSensor();
-    if (res != EXIT_SUCCESS) {
-        fprintf(stderr, "failed to init sensor\n");
-        return res;
-    }
-
-    res = initPhidgetMotor();
-    if (res != EXIT_SUCCESS) {
-        fprintf(stderr, "failed to init motor\n");
-        return res;
-    }
-
-    return 0;
-}
-
-int initPhidgetSensor() {
-    PhidgetReturnCode res;
-    const char *errs;
-
-    res = PhidgetVoltageInput_create(&voltageInputHandle);
-    if (res != EPHIDGET_OK) {
-        fprintf(stderr, "failed to create voltage input channel\n");
-        return EXIT_FAILURE;
-    }
-
-    res = Phidget_openWaitForAttachment((PhidgetHandle) voltageInputHandle, 5000);
-    if (res != EPHIDGET_OK) {
-        if (res == EPHIDGET_TIMEOUT) {
-            printf("Channel did not attach after 5 seconds: please check that the device is attached\n");
-            return EXIT_FAILURE;
-        } else {
-            Phidget_getErrorDescription(res, &errs);
-            fprintf(stderr, "failed to open channel:%s\n", errs);
-            return EXIT_FAILURE;
-        }
-    }
-
-    min_voltage = 3.5;
-    max_voltage = 5;
-    middle_voltage = (min_voltage+max_voltage)/2;
-    res = PhidgetVoltageInput_setOnVoltageChangeHandler(voltageInputHandle, onVoltageChangeHandler, NULL);
-    if (res != EPHIDGET_OK) {
-        Phidget_getErrorDescription(res, &errs);
-        fprintf(stderr, "failed to set voltage change handler: %s\n", errs);
-        return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
-}
-
-int initPhidgetMotor() {
-    PhidgetReturnCode res;
-    const char *errs;
-
-    res = PhidgetRCServo_create(&servoHandle);
-    if (res != EPHIDGET_OK) {
-        fprintf(stderr, "failed to create rc servo channel\n");
-        return EXIT_FAILURE;
-    }
-
-    /*
-    * Open the channel synchronously: waiting a maximum of 5 seconds.
-    */
-    res = Phidget_openWaitForAttachment((PhidgetHandle) servoHandle, 5000);
-    if (res != EPHIDGET_OK) {
-        if (res == EPHIDGET_TIMEOUT) {
-            printf("Channel did not attach after 5 seconds: please check that the device is attached\n");
-            return EXIT_FAILURE;
-        } else {
-            Phidget_getErrorDescription(res, &errs);
-            fprintf(stderr, "failed to open channel:%s\n", errs);
-            return EXIT_FAILURE;
-        }
-    }
-
-    PhidgetRCServo_setTargetPosition(servoHandle, 90);
-    printf("Setting engaged\n");
-    res = PhidgetRCServo_setEngaged(servoHandle, 1);
-    if (res != EPHIDGET_OK) {
-        printf("failed to set engaged\n");
-        return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
-}
