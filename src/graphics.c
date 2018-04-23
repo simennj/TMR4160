@@ -33,7 +33,9 @@ GLuint VBO, VAO, EBO;
 
 int triangles;
 
-int test() {
+GLFWwindow *window;
+
+void graphics_init() {
     glfwInit();
     // Set required options for GLFW
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -42,7 +44,7 @@ int test() {
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
     // Create a window object
-    GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Dynamic Positioning", NULL, NULL);
+    window = glfwCreateWindow(WIDTH, HEIGHT, "Dynamic Positioning", NULL, NULL);
     glfwMakeContextCurrent(window);
 
     glfwSetKeyCallback(window, key_callback);
@@ -70,9 +72,15 @@ int test() {
 
     // Uncommenting this call will result in wireframe polygons.
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+}
 
-    while (!glfwWindowShouldClose(window)) {
-        glfwPollEvents();
+int graphics_open() {
+    return !glfwWindowShouldClose(window);
+}
+
+
+void graphics_update() {
+    glfwPollEvents();
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -83,12 +91,13 @@ int test() {
         glBindVertexArray(0);
 
         glfwSwapBuffers(window);
-    }
+}
+
+void graphics_stop() {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
     glfwTerminate();
-    return 0;
 }
 
 GLuint loadShaders() {// Load vertex shader

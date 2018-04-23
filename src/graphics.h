@@ -1,9 +1,10 @@
 #ifndef TMR4160_GRAPHICS_H
 #define TMR4160_GRAPHICS_H
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+void graphics_init();
 
-void test();
+int graphics_open();
+
+void graphics_update();
 
 #endif //TMR4160_GRAPHICS_H
