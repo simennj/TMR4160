@@ -240,6 +240,7 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 }
 
 void error_callback(int code, const char *description) {
-    printf("code: %i\n", code);
+    printf("%i: ", code);
     printf(description);
+    printf("\n");
 }
