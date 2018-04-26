@@ -19,6 +19,8 @@ IntVectors *createIntVectorFromFile(const char *filename);
 
 GLuint shaderProgram;
 
+void error_callback(int code, const char* description);
+
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
 
 const GLchar *getShaderSource(const char *filename);
@@ -36,6 +38,8 @@ int triangles;
 GLFWwindow *window;
 
 void graphics_init() {
+    glfwSetErrorCallback(error_callback);
+
     glfwInit();
     // Set required options for GLFW
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -233,4 +237,9 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
         IntVectors *indic = createIntVectorFromFile("indices.txt");
         bindPolygons(verts, indic);
     }
+}
+
+void error_callback(int code, const char *description) {
+    printf("code: %i\n", code);
+    printf(description);
 }
