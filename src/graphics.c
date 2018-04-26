@@ -5,19 +5,11 @@
 #include <string.h>
 
 
-typedef struct {
-    int count;
-    GLfloat *array;
-} FloatVectors;
+int getVectorCountFromFile(const char *filename);
 
-typedef struct {
-    int count;
-    GLint *array;
-} IntVectors;
+void getFloatVectorFromFile(const char *filename, int count, float *array);
 
-FloatVectors *createFloatVectorFromFile(const char *filename);
-
-IntVectors *createIntVectorFromFile(const char *filename);
+void getIntVectorFromFile(const char *filename, int count, int *array);
 
 GLuint shaderProgram;
 
@@ -28,9 +20,9 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 
 const GLchar *getShaderSource(const char *filename);
 
-void bindPolygons(const FloatVectors *verts, const IntVectors *indic);
-
 GLuint loadShaders();
+
+void reload();
 
 const GLuint WIDTH = 800, HEIGHT = 600;
 
@@ -67,16 +59,11 @@ void graphics_init() {
 
     shaderProgram = loadShaders();
 
-    FloatVectors *verts = createFloatVectorFromFile("vertices.txt");
-
-    IntVectors *indic = createIntVectorFromFile("indices.txt");
-    triangles = indic->count;
-
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
-    bindPolygons(verts, indic);
 
+    reload();
 
     // Uncommenting this call will result in wireframe polygons.
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -151,14 +138,15 @@ GLuint loadShaders() {// Load vertex shader
     return shaderProgram;
 }
 
-void bindPolygons(const FloatVectors *verts, const IntVectors *indic) {// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
+void bindPolygons(GLfloat *verts, GLint vertCount, GLint *indic,
+                  GLint indicCount) {// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * verts->count * 3, verts->array, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertCount * 3, verts, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLint) * indic->count * 3, indic->array, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLint) * indicCount * 3, indic, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid *) 0);
     glEnableVertexAttribArray(0);
@@ -174,44 +162,50 @@ void bindPolygons(const FloatVectors *verts, const IntVectors *indic) {// Bind t
 
 const int VECTOR_BUFFER_SIZE = 20;
 
-FloatVectors *createFloatVectorFromFile(const char *filename) {
+GLint getVectorCountFromFile(const char *filename) {
     FILE *file = fopen(filename, "r");
-    char *rest;
-    char line[VECTOR_BUFFER_SIZE];
-    fgets(line, VECTOR_BUFFER_SIZE, file);
-
-    FloatVectors *verts = malloc(sizeof(FloatVectors));
-    verts->count = strtol(line, &rest, 10);
-    verts->array = malloc(3 * verts->count * sizeof(GLfloat));
-
-    for (int i = 0; i < verts->count * 3; i += 3) {
-        fgets(line, VECTOR_BUFFER_SIZE, file);
-        rest = strtok(line, "#"); // everything after the first # is a comment
-        for (int j = 0; j < 3; ++j) { // the third coordinate becomes 0 if not defined
-            verts->array[i + j] = strtof(rest, &rest);
+    int count = 0;
+    int bufferChar;
+    char lastCharNewline = 1;
+    for (bufferChar = getc(file); bufferChar != EOF; bufferChar = getc(file)) {
+        if (bufferChar == '\n') {
+            count += !lastCharNewline;
+            lastCharNewline = 1;
+        } else {
+            lastCharNewline = 0;
         }
     }
-    return verts;
+    return count;
 }
 
-IntVectors *createIntVectorFromFile(const char *filename) {
+void getFloatVectorFromFile(const char *filename, GLint count, GLfloat *array) {
     FILE *file = fopen(filename, "r");
     char *rest;
     char line[VECTOR_BUFFER_SIZE];
-    fgets(line, VECTOR_BUFFER_SIZE, file);
 
-    IntVectors *verts = malloc(sizeof(FloatVectors));
-    verts->count = strtol(line, &rest, 10);
-    verts->array = malloc(3 * verts->count * sizeof(GLint));
-
-    for (int i = 0; i < verts->count * 3; i += 3) {
+    for (int i = 0; i < count * 3; i += 3) {
         fgets(line, VECTOR_BUFFER_SIZE, file);
         rest = strtok(line, "#"); // everything after the first # is a comment
         for (int j = 0; j < 3; ++j) { // the third coordinate becomes 0 if not defined
-            verts->array[i + j] = strtol(rest, &rest, 10);
+            array[i + j] = strtof(rest, &rest);
         }
     }
-    return verts;
+    fclose(file);
+}
+
+void getIntVectorFromFile(const char *filename, GLint count, GLint *array) {
+    FILE *file = fopen(filename, "r");
+    char *rest;
+    char line[VECTOR_BUFFER_SIZE];
+
+    for (int i = 0; i < count * 3; i += 3) {
+        fgets(line, VECTOR_BUFFER_SIZE, file);
+        rest = strtok(line, "#"); // everything after the first # is a comment
+        for (int j = 0; j < 3; ++j) { // the third coordinate becomes 0 if not defined
+            array[i + j] = (GLint) strtol(rest, &rest, 10);
+        }
+    }
+    fclose(file);
 }
 
 const GLchar *getShaderSource(const char *filename) {
@@ -236,11 +230,20 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
     else if (key == GLFW_KEY_R && action == GLFW_PRESS) {
-        shaderProgram = loadShaders();
-        FloatVectors *verts = createFloatVectorFromFile("vertices.txt");
-        IntVectors *indic = createIntVectorFromFile("indices.txt");
-        bindPolygons(verts, indic);
+        reload();
     }
+}
+
+void reload() {
+    shaderProgram = loadShaders();
+    GLint vertCount = getVectorCountFromFile("vertices.txt");
+    GLint indicCount = getVectorCountFromFile("indices.txt");
+    GLfloat verts[vertCount * 3];
+    GLint indic[indicCount * 3];
+    getFloatVectorFromFile("vertices.txt", vertCount, verts);
+    getIntVectorFromFile("indices.txt", indicCount, indic);
+    bindPolygons(verts, vertCount, indic, indicCount);
+    triangles = indicCount;
 }
 
 void error_callback(int code, const char *description) {
