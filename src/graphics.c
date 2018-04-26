@@ -1,15 +1,8 @@
 #include <stdio.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <stdlib.h>
 #include <string.h>
-
-
-int getVectorCountFromFile(const char *filename);
-
-void getFloatVectorFromFile(const char *filename, int count, float *array);
-
-void getIntVectorFromFile(const char *filename, int count, int *array);
+#include "file_utils.h"
 
 GLuint shaderProgram;
 
@@ -17,8 +10,6 @@ void error_callback(int code, const char* description);
 
 void resize_callback(GLFWwindow *window, int width, int height);
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
-
-const GLchar *getShaderSource(const char *filename);
 
 GLuint loadShaders();
 
@@ -158,72 +149,6 @@ void bindPolygons(GLfloat *verts, GLint vertCount, GLint *indic,
             0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
 
 
-}
-
-const int VECTOR_BUFFER_SIZE = 20;
-
-GLint getVectorCountFromFile(const char *filename) {
-    FILE *file = fopen(filename, "r");
-    int count = 0;
-    int bufferChar;
-    char lastCharNewline = 1;
-    for (bufferChar = getc(file); bufferChar != EOF; bufferChar = getc(file)) {
-        if (bufferChar == '\n') {
-            count += !lastCharNewline;
-            lastCharNewline = 1;
-        } else {
-            lastCharNewline = 0;
-        }
-    }
-    return count;
-}
-
-void getFloatVectorFromFile(const char *filename, GLint count, GLfloat *array) {
-    FILE *file = fopen(filename, "r");
-    char *rest;
-    char line[VECTOR_BUFFER_SIZE];
-
-    for (int i = 0; i < count * 3; i += 3) {
-        fgets(line, VECTOR_BUFFER_SIZE, file);
-        rest = strtok(line, "#"); // everything after the first # is a comment
-        for (int j = 0; j < 3; ++j) { // the third coordinate becomes 0 if not defined
-            array[i + j] = strtof(rest, &rest);
-        }
-    }
-    fclose(file);
-}
-
-void getIntVectorFromFile(const char *filename, GLint count, GLint *array) {
-    FILE *file = fopen(filename, "r");
-    char *rest;
-    char line[VECTOR_BUFFER_SIZE];
-
-    for (int i = 0; i < count * 3; i += 3) {
-        fgets(line, VECTOR_BUFFER_SIZE, file);
-        rest = strtok(line, "#"); // everything after the first # is a comment
-        for (int j = 0; j < 3; ++j) { // the third coordinate becomes 0 if not defined
-            array[i + j] = (GLint) strtol(rest, &rest, 10);
-        }
-    }
-    fclose(file);
-}
-
-const GLchar *getShaderSource(const char *filename) {
-    FILE *f = fopen(filename, "rb");
-    char *fragmentShaderSource = 0;
-    size_t length;
-    if (f) {
-        fseek(f, 0, SEEK_END);
-        length = (size_t) ftell(f);
-        fseek(f, 0, SEEK_SET);
-        fragmentShaderSource = malloc(length + 1);
-        if (fragmentShaderSource) {
-            fread(fragmentShaderSource, 1, length, f);
-            fragmentShaderSource[length] = '\0';
-        }
-        fclose(f);
-    }
-    return fragmentShaderSource;
 }
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode) {
