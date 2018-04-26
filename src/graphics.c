@@ -23,6 +23,7 @@ GLuint shaderProgram;
 
 void error_callback(int code, const char* description);
 
+void resize_callback(GLFWwindow *window, int width, int height);
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
 
 const GLchar *getShaderSource(const char *filename);
@@ -47,12 +48,13 @@ void graphics_init() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+//    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
     // Create a window object
     window = glfwCreateWindow(WIDTH, HEIGHT, "Dynamic Positioning", NULL, NULL);
     glfwMakeContextCurrent(window);
 
+    glfwSetWindowSizeCallback(window, resize_callback);
     glfwSetKeyCallback(window, key_callback);
 
     // Initialize glad, use glfw to retrieve GL function pointers
@@ -246,3 +248,14 @@ void error_callback(int code, const char *description) {
     printf(description);
     printf("\n");
 }
+
+void resize_callback(GLFWwindow *window, int width, int height) {
+
+    if (height >= width)
+        glViewport(0, (height - width) / 2, width, width);
+    else
+        glViewport((width - height) / 2, 0, height, height);
+
+
+}
+
