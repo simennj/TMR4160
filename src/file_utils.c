@@ -1,4 +1,3 @@
-#include <glad/glad.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -8,7 +7,7 @@ const int VECTOR_BUFFER_SIZE = 20;
 
 
 GLint getVectorCountFromFile(const char *filename) {
-    struct _IO_FILE *file = fopen(filename, "r");
+    FILE *file = fopen(filename, "r");
     int count = 0;
     int bufferChar;
     char lastCharNewline = 1;
@@ -24,7 +23,7 @@ GLint getVectorCountFromFile(const char *filename) {
 }
 
 void getFloatVectorFromFile(const char *filename, GLint count, GLfloat *array) {
-    struct _IO_FILE *file = fopen(filename, "r");
+    FILE *file = fopen(filename, "r");
     char *rest;
     char line[VECTOR_BUFFER_SIZE];
 
@@ -39,7 +38,7 @@ void getFloatVectorFromFile(const char *filename, GLint count, GLfloat *array) {
 }
 
 void getIntVectorFromFile(const char *filename, GLint count, GLint *array) {
-    struct _IO_FILE *file = fopen(filename, "r");
+    FILE *file = fopen(filename, "r");
     char *rest;
     char line[VECTOR_BUFFER_SIZE];
 
@@ -54,7 +53,7 @@ void getIntVectorFromFile(const char *filename, GLint count, GLint *array) {
 }
 
 const GLchar *getShaderSource(const char *filename) {
-    struct _IO_FILE *f = fopen(filename, "rb");
+    FILE *f = fopen(filename, "rb");
     char *fragmentShaderSource = 0;
     size_t length;
     if (f) {
@@ -69,4 +68,11 @@ const GLchar *getShaderSource(const char *filename) {
         fclose(f);
     }
     return fragmentShaderSource;
+}
+
+int loadConstants(const char *filename, double *k_p, double *k_i, double *k_d) {
+    FILE *file = fopen(filename, "r");
+    int res = fscanf(file, "%lf %lf %lf", k_p, k_i, k_d);
+    fclose(file);
+    return res;
 }

@@ -2,15 +2,9 @@
 
 #include <time.h>
 
+#include "file_utils.h"
 #include "fake_boat.h"
 #include "graphics.h"
-
-int loadConstants(const char *filename, double *k_p, double *k_i, double *k_d) {
-    FILE *file = fopen(filename, "r");
-    int res = fscanf(file, "%lf %lf %lf", k_p, k_i, k_d);
-    fclose(file);
-    return res;
-}
 
 int main(int argc, char **argv) {
     graphics_init();
