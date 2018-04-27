@@ -23,15 +23,14 @@ int main(int argc, char **argv) {
     while (graphics_open()) {
         clock_gettime(CLOCK_MONOTONIC, &now_time);
         dt = now_time.tv_sec - last_time.tv_sec + (now_time.tv_nsec - last_time.tv_nsec) / 1E9;
-        if (dt > .01) {
-            last_time = now_time;
-            double displacement = target_position - getBoatPosition();
-            accumulated_displacement = accumulated_displacement + displacement * dt;
-            double displacement_velocity = (displacement - last_displacement) / dt;
-            double motor_force = k_p * displacement + k_i * accumulated_displacement + k_d * displacement_velocity;
-            updateBoat(dt, motor_force);
-            printFakeBoatState();
-        }
+        last_time = now_time;
+        double displacement = target_position - getBoatPosition();
+        accumulated_displacement = accumulated_displacement + displacement * dt;
+        double displacement_velocity = (displacement - last_displacement) / dt;
+        double motor_force = k_p * displacement + k_i * accumulated_displacement + k_d * displacement_velocity;
+        updateBoat(dt, motor_force);
+        printFakeBoatState();
+        graphics_setBoatPosition(getBoatPosition());
         graphics_update();
     }
 

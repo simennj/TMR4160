@@ -7,4 +7,6 @@ int graphics_open();
 
 void graphics_update();
 
+void graphics_setBoatPosition(GLfloat position);
+
 #endif //TMR4160_GRAPHICS_H

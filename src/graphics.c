@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <string.h>
 #include "file_utils.h"
 
 GLuint shaderProgram;
@@ -22,6 +21,10 @@ GLuint VBO, VAO, EBO;
 int triangles;
 
 GLFWwindow *window;
+
+GLuint boatVertexArray;
+
+GLuint boatVertexBuffer;
 
 void graphics_init() {
     glfwSetErrorCallback(error_callback);
@@ -53,8 +56,20 @@ void graphics_init() {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
+    glGenVertexArrays(1, &boatVertexArray);
+
+    glBindVertexArray(boatVertexArray);
+
+    glGenBuffers(1, &boatVertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, boatVertexBuffer);
+    GLfloat boatVertices[9] = {.05, .8, 0, .05, .9, 0, .05, .85, 0};
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 9, boatVertices, GL_DYNAMIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
 
     reload();
+
 
     // Uncommenting this call will result in wireframe polygons.
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -68,15 +83,17 @@ int graphics_open() {
 void graphics_update() {
     glfwPollEvents();
 
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
+    glUseProgram(shaderProgram);
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(boatVertexArray);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glBindVertexArray(0);
 
-        glfwSwapBuffers(window);
+    glfwSwapBuffers(window);
 }
 
 void graphics_stop() {
@@ -149,6 +166,12 @@ void bindPolygons(GLfloat *verts, GLint vertCount, GLint *indic,
             0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
 
 
+}
+
+void graphics_setBoatPosition(GLfloat position) {
+    glBindBuffer(GL_ARRAY_BUFFER, boatVertexBuffer);
+    GLfloat boatVertices[9] = {position - .05, .8, 0, position - .05, .9, 0, position + .05, .85, 0};
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 9, boatVertices);
 }
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode) {
