@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "file_utils.h"
 
-const int VECTOR_BUFFER_SIZE = 20;
+const int VECTOR_BUFFER_SIZE = 100;
 
 
 GLint getVectorCountFromFile(const char *filename) {
