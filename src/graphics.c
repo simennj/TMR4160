@@ -108,7 +108,7 @@ void graphics_update() {
     glDrawArrays(GL_TRIANGLES, 0, 3);
     glBindVertexArray(graphVertexArray);
     glDrawArrays(GL_LINE_STRIP, 0, graphIndex / 2);
-    glDrawArrays(GL_LINE_STRIP, graphIndex / 2, graphLength - graphIndex / 2);
+    glDrawArrays(GL_LINE_STRIP, graphIndex / 2 + 1, graphLength - graphIndex / 2);
     glBindVertexArray(0);
 
     glfwSwapBuffers(window);
