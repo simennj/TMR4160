@@ -23,8 +23,13 @@ int triangles;
 GLFWwindow *window;
 
 GLuint boatVertexArray;
-
 GLuint boatVertexBuffer;
+
+GLuint graphVertexArray;
+GLuint graphVertexBuffer;
+
+GLint graphIndex;
+#define graphLength 1000
 
 void graphics_init() {
     glfwSetErrorCallback(error_callback);
@@ -57,15 +62,26 @@ void graphics_init() {
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
     glGenVertexArrays(1, &boatVertexArray);
+    glGenVertexArrays(1, &graphVertexArray);
 
     glBindVertexArray(boatVertexArray);
 
     glGenBuffers(1, &boatVertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, boatVertexBuffer);
-    GLfloat boatVertices[9] = {.05, .8, 0, .05, .9, 0, .05, .85, 0};
+    GLfloat boatVertices[9] = {-.05f, .8, 0, -.05f, .9, 0, .05, .85, 0};
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 9, boatVertices, GL_DYNAMIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    glEnableVertexAttribArray(0);
+    glBindVertexArray(graphVertexArray);
+
+    glGenBuffers(1, &graphVertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, graphVertexBuffer);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * graphLength * 2, NULL, GL_DYNAMIC_DRAW);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(0);
 
     reload();
@@ -91,6 +107,9 @@ void graphics_update() {
     glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, 0);
     glBindVertexArray(boatVertexArray);
     glDrawArrays(GL_TRIANGLES, 0, 3);
+    glBindVertexArray(graphVertexArray);
+    glDrawArrays(GL_LINE_STRIP, 0, graphIndex / 2);
+    glDrawArrays(GL_LINE_STRIP, graphIndex / 2, graphLength - graphIndex / 2);
     glBindVertexArray(0);
 
     glfwSwapBuffers(window);
@@ -170,8 +189,13 @@ void bindPolygons(GLfloat *verts, GLint vertCount, GLint *indic,
 
 void graphics_setBoatPosition(GLfloat position) {
     glBindBuffer(GL_ARRAY_BUFFER, boatVertexBuffer);
-    GLfloat boatVertices[9] = {position - .05, .8, 0, position - .05, .9, 0, position + .05, .85, 0};
+    GLfloat boatVertices[9] = {position - .05f, .8, 0, position - .05f, .9, 0, position + .05f, .85, 0};
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 9, boatVertices);
+
+    glBindBuffer(GL_ARRAY_BUFFER, graphVertexBuffer);
+    GLfloat point[2] = {1.0f * graphIndex / graphLength - 1, position};
+    glBufferSubData(GL_ARRAY_BUFFER, sizeof(GLfloat) * graphIndex, sizeof(GLfloat) * 2, point);
+    graphIndex = (graphIndex + 2) % (graphLength * 2);
 }
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode) {
