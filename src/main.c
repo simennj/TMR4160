@@ -23,6 +23,7 @@ int main(int argc, char **argv) {
     while (graphics_open()) {
         clock_gettime(CLOCK_MONOTONIC, &now_time);
         dt = now_time.tv_sec - last_time.tv_sec + (now_time.tv_nsec - last_time.tv_nsec) / 1E9;
+        if (dt <= 0) continue;
         last_time = now_time;
         double displacement = target_position - getBoatPosition();
         accumulated_displacement = accumulated_displacement + displacement * dt;
