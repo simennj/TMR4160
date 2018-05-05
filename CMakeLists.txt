@@ -11,10 +11,16 @@ add_library(glad include/glad/glad.c)
 
 LINK_DIRECTORIES(external)
 
-add_executable(TMR4160 src/main.c src/graphics.c src/fake_boat.c src/file_utils.c)
+add_executable(TMR4160
+        src/main.c
+        src/graphics.c
+        src/fake_boat.c
+        src/file_utils.c
+        src/pid.c
+        )
 
 TARGET_LINK_LIBRARIES(TMR4160
         glfw3
         glad
         ${OPENGL_LIBRARY}
-)
+        )
