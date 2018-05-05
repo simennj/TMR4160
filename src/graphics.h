@@ -1,9 +1,9 @@
 #ifndef TMR4160_GRAPHICS_H
 #define TMR4160_GRAPHICS_H
 
-void graphics_init();
+void graphics_init(void *(*loadProc)(const char *name));
 
-int graphics_open();
+void graphics_reload();
 
 void graphics_update();
 

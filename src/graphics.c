@@ -1,26 +1,16 @@
 #include <stdio.h>
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include "file_utils.h"
 
 GLuint shaderProgram;
 
-void error_callback(int code, const char* description);
-
-void resize_callback(GLFWwindow *window, int width, int height);
-void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
-
 GLuint loadShaders();
 
-void reload();
-
-const GLuint WIDTH = 800, HEIGHT = 600;
+void graphics_reload();
 
 GLuint VBO, VAO, EBO;
 
 int triangles;
-
-GLFWwindow *window;
 
 GLuint boatVertexArray;
 GLuint boatVertexBuffer;
@@ -31,32 +21,9 @@ GLuint graphVertexBuffer;
 GLint currentGraphVertexNumber;
 #define graphLength 1000
 
-void graphics_init() {
-    glfwSetErrorCallback(error_callback);
-
-    glfwInit();
-    // Set required options for GLFW
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-//    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-
-    // Create a window object
-    window = glfwCreateWindow(WIDTH, HEIGHT, "Dynamic Positioning", NULL, NULL);
-    glfwMakeContextCurrent(window);
-
-    glfwSetWindowSizeCallback(window, resize_callback);
-    glfwSetKeyCallback(window, key_callback);
-
+void graphics_init(void *(*loadProc)(const char *name)) {
     // Initialize glad, use glfw to retrieve GL function pointers
-    gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
-
-    // Define the viewport dimensions
-    int width, height;
-    glfwGetFramebufferSize(window, &width, &height);
-    glViewport(0, 0, width, height);
-
-    shaderProgram = loadShaders();
+    gladLoadGLLoader((GLADloadproc) loadProc);
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -83,21 +50,14 @@ void graphics_init() {
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(0);
 
-    reload();
+    graphics_reload();
 
 
     // Uncommenting this call will result in wireframe polygons.
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
-int graphics_open() {
-    return !glfwWindowShouldClose(window);
-}
-
-
 void graphics_update() {
-    glfwPollEvents();
-
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -110,15 +70,6 @@ void graphics_update() {
     glDrawArrays(GL_LINE_STRIP, 0, currentGraphVertexNumber);
     glDrawArrays(GL_LINE_STRIP, currentGraphVertexNumber, graphLength - currentGraphVertexNumber);
     glBindVertexArray(0);
-
-    glfwSwapBuffers(window);
-}
-
-void graphics_stop() {
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
-    glfwTerminate();
 }
 
 GLuint loadShaders() {// Load vertex shader
@@ -197,15 +148,7 @@ void graphics_setBoatPosition(GLfloat position) {
     currentGraphVertexNumber = (currentGraphVertexNumber + 1) % (graphLength);
 }
 
-void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode) {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GL_TRUE);
-    else if (key == GLFW_KEY_R && action == GLFW_PRESS) {
-        reload();
-    }
-}
-
-void reload() {
+void graphics_reload() {
     shaderProgram = loadShaders();
     GLint vertCount = getVectorCountFromFile("vertices.txt");
     GLint indicCount = getVectorCountFromFile("indices.txt");
@@ -216,20 +159,3 @@ void reload() {
     bindPolygons(verts, vertCount, indic, indicCount);
     triangles = indicCount;
 }
-
-void error_callback(int code, const char *description) {
-    printf("%i: ", code);
-    printf(description);
-    printf("\n");
-}
-
-void resize_callback(GLFWwindow *window, int width, int height) {
-
-    if (height >= width)
-        glViewport(0, (height - width) / 2, width, width);
-    else
-        glViewport((width - height) / 2, 0, height, height);
-
-
-}
-

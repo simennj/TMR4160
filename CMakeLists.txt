@@ -16,6 +16,7 @@ add_executable(TMR4160
         src/graphics.c
         src/fake_boat.c
         src/file_utils.c
+        src/window_util.c
         src/pid.c
         )
 

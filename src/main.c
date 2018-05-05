@@ -1,23 +1,36 @@
 #include <stdio.h>
 
-#include <time.h>
+#include <GLFW/glfw3.h>
 
 #include "file_utils.h"
-#include "pid.h"
 #include "graphics.h"
+#include "window_util.h"
+#include "pid.h"
+
+void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode) {
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, GL_TRUE);
+    else if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+        graphics_reload();
+    }
+}
 
 int main(int argc, char **argv) {
-    graphics_init();
 
     double k_p, k_i, k_d, target_position = 0;
     loadConstants("constants.txt", &k_p, &k_i, &k_d);
     printf("K_p: %lf, K_i: %lf, K_d: %lf\n", k_p, k_i, k_d);
     pid_init(k_p, k_i, k_d, target_position);
 
-    while (graphics_open()) {
+    window_init(key_callback);
+    graphics_init(glfwGetProcAddress);
+
+
+    while (window_open()) {
         pid_update();
         graphics_setBoatPosition(pid_getBoatState().position);
         graphics_update();
+        window_update();
     }
 
 //    int res;
