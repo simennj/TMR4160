@@ -7,20 +7,25 @@
 #include "window_util.h"
 #include "pid.h"
 
+void init_pid() {
+    double k_p, k_i, k_d, target_position = 0;
+    loadConstants("constants.txt", &k_p, &k_i, &k_d);
+    printf("K_p: %lf, K_i: %lf, K_d: %lf\n", k_p, k_i, k_d);
+    pid_init(k_p, k_i, k_d, target_position);
+}
+
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
     else if (key == GLFW_KEY_R && action == GLFW_PRESS) {
         graphics_reload();
+        init_pid();
     }
 }
 
 int main(int argc, char **argv) {
 
-    double k_p, k_i, k_d, target_position = 0;
-    loadConstants("constants.txt", &k_p, &k_i, &k_d);
-    printf("K_p: %lf, K_i: %lf, K_d: %lf\n", k_p, k_i, k_d);
-    pid_init(k_p, k_i, k_d, target_position);
+    init_pid();
 
     window_init(key_callback);
     graphics_init(glfwGetProcAddress);
