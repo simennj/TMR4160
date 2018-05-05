@@ -9,6 +9,6 @@ void getIntVectorFromFile(const char *filename, int count, int *array);
 
 const char *getShaderSource(const char *filename);
 
-int loadConstants(const char *filename, double *k_p, double *k_i, double *k_d);
+int loadConstants(const char *filename, double *k_p, double *k_i, double *k_d, double *targetPosition);
 
 #endif //TMR4160_FILE_UTILS_H
