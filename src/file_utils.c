@@ -6,7 +6,7 @@
 const int VECTOR_BUFFER_SIZE = 100;
 
 
-GLint getVectorCountFromFile(const char *filename) {
+int getVectorCountFromFile(const char *filename) {
     FILE *file = fopen(filename, "r");
     int count = 0;
     int bufferChar;
@@ -22,7 +22,7 @@ GLint getVectorCountFromFile(const char *filename) {
     return count;
 }
 
-void getFloatVectorFromFile(const char *filename, GLint count, GLfloat *array) {
+void getFloatVectorFromFile(const char *filename, int count, float *array) {
     FILE *file = fopen(filename, "r");
     char *rest;
     char line[VECTOR_BUFFER_SIZE];
@@ -37,7 +37,7 @@ void getFloatVectorFromFile(const char *filename, GLint count, GLfloat *array) {
     fclose(file);
 }
 
-void getIntVectorFromFile(const char *filename, GLint count, GLint *array) {
+void getIntVectorFromFile(const char *filename, int count, int *array) {
     FILE *file = fopen(filename, "r");
     char *rest;
     char line[VECTOR_BUFFER_SIZE];
@@ -46,13 +46,13 @@ void getIntVectorFromFile(const char *filename, GLint count, GLint *array) {
         fgets(line, VECTOR_BUFFER_SIZE, file);
         rest = strtok(line, "#"); // everything after the first # is a comment
         for (int j = 0; j < 3; ++j) { // the third coordinate becomes 0 if not defined
-            array[i + j] = (GLint) strtol(rest, &rest, 10);
+            array[i + j] = (int) strtol(rest, &rest, 10);
         }
     }
     fclose(file);
 }
 
-const GLchar *getShaderSource(const char *filename) {
+const char *getShaderSource(const char *filename) {
     FILE *f = fopen(filename, "rb");
     char *fragmentShaderSource = 0;
     size_t length;
