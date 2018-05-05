@@ -38,7 +38,7 @@ void pid_update() {
 
 struct boatState pid_getBoatState() {
     struct boatState state = {
-            (float) displacement,
+            (float) getBoatPosition(),
             (float) displacementVelocity,
             (float) motorForce
     };
