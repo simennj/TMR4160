@@ -78,39 +78,38 @@ void graphics_update() {
     glBindVertexArray(0);
 }
 
-GLuint loadShaders() {// Load vertex shader
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    const GLchar *vertexShaderSource = getShaderSource("vertexShader.glsl");
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
+void loadShader(GLuint shader, GLchar *shaderFile) {
+    const GLchar *shaderSource = getShaderSource(shaderFile);
+    glShaderSource(shader, 1, &shaderSource, NULL);
+    glCompileShader(shader);
     // Check for compile time errors
     GLint success;
     GLchar infoLog[512];
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success) {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        printf("Vertex shader error:%s\n", infoLog);
+        glGetShaderInfoLog(shader, 512, NULL, infoLog);
+        printf("Shader error (%s):%s\n", shaderFile, infoLog);
     }
+}
 
+GLuint loadShaders() {
+    // Load vertex shader
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    loadShader(vertexShader, "vertexShader.glsl");
 
     // Load fragment shader
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    const GLchar *fragment = getShaderSource("fragmentShader.glsl");
-    glShaderSource(fragmentShader, 1, &fragment, NULL);
-    glCompileShader(fragmentShader);
-    // Check for compile time errors
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        printf("Fragment shader error:%s\n", infoLog);
-    }
+    loadShader(fragmentShader, "fragmentShader.glsl");
 
     // Link shaders
     GLuint shaderProgram = glCreateProgram();
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);
+
     // Check for linking errors
+    GLint success;
+    GLchar infoLog[512];
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
     if (!success) {
         glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
