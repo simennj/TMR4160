@@ -38,23 +38,23 @@ void boat_init() {
 
 }
 
+void graph_init() {
+    glGenVertexArrays(1, &graphVertexArray);
+    glBindVertexArray(graphVertexArray);
+    glGenBuffers(1, &graphVertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, graphVertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * graphLength * 2, NULL, GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(0);
+}
+
 void graphics_init(void *(*loadProc)(const char *name)) {
     // Initialize glad, use glfw to retrieve GL function pointers
     gladLoadGLLoader((GLADloadproc) loadProc);
 
     ui_init();
     boat_init();
-    glGenVertexArrays(1, &graphVertexArray);
-
-    glBindVertexArray(graphVertexArray);
-
-    glGenBuffers(1, &graphVertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, graphVertexBuffer);
-
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * graphLength * 2, NULL, GL_DYNAMIC_DRAW);
-
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(0);
+    graph_init();
 
     graphics_reload();
 
