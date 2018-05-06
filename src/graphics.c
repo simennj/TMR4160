@@ -2,9 +2,9 @@
 #include <glad/glad.h>
 #include "file_utils.h"
 
-GLuint shaderProgram;
-
-GLuint loadShaders();
+GLuint uiVertexShader;
+GLuint uiFragmentShader;
+GLuint uiShaderProgram;
 
 void graphics_reload();
 
@@ -46,6 +46,10 @@ void graph_init() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * graphLength * 2, NULL, GL_DYNAMIC_DRAW);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(0);
+
+    uiVertexShader = glCreateShader(GL_VERTEX_SHADER);
+    uiFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    uiShaderProgram = glCreateProgram();
 }
 
 void graphics_init(void *(*loadProc)(const char *name)) {
@@ -67,7 +71,7 @@ void graphics_update() {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glUseProgram(shaderProgram);
+    glUseProgram(uiShaderProgram);
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, 0);
     glBindVertexArray(boatVertexArray);
@@ -92,32 +96,28 @@ void loadShader(GLuint shader, GLchar *shaderFile) {
     }
 }
 
-GLuint loadShaders() {
+void uiShadersLoad() {
     // Load vertex shader
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    loadShader(vertexShader, "vertexShader.glsl");
+    loadShader(uiVertexShader, "vertexShader.glsl");
 
     // Load fragment shader
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    loadShader(fragmentShader, "fragmentShader.glsl");
+    loadShader(uiFragmentShader, "fragmentShader.glsl");
 
     // Link shaders
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
+    glAttachShader(uiShaderProgram, uiVertexShader);
+    glAttachShader(uiShaderProgram, uiFragmentShader);
+    glLinkProgram(uiShaderProgram);
 
     // Check for linking errors
     GLint success;
     GLchar infoLog[512];
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    glGetProgramiv(uiShaderProgram, GL_LINK_STATUS, &success);
     if (!success) {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+        glGetProgramInfoLog(uiShaderProgram, 512, NULL, infoLog);
         printf("Shader linking error:%s\n", infoLog);
     }
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-    return shaderProgram;
+    glDeleteShader(uiVertexShader);
+    glDeleteShader(uiFragmentShader);
 }
 
 void bindPolygons(GLfloat *verts, GLint vertCount, GLint *indic,
@@ -154,7 +154,7 @@ void graphics_setBoatPosition(GLfloat position) {
 }
 
 void graphics_reload() {
-    shaderProgram = loadShaders();
+    uiShadersLoad();
     GLint vertCount = getVectorCountFromFile("vertices.txt");
     GLint indicCount = getVectorCountFromFile("indices.txt");
     GLfloat verts[vertCount * 3];
