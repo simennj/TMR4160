@@ -21,13 +21,17 @@ GLuint graphVertexBuffer;
 GLint currentGraphVertexNumber;
 #define graphLength 1000
 
+void ui_init() {
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+}
+
 void graphics_init(void *(*loadProc)(const char *name)) {
     // Initialize glad, use glfw to retrieve GL function pointers
     gladLoadGLLoader((GLADloadproc) loadProc);
 
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
+    ui_init();
     glGenVertexArrays(1, &boatVertexArray);
     glGenVertexArrays(1, &graphVertexArray);
 
