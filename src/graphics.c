@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <glad/glad.h>
 #include "file_utils.h"
+#include "shader_util.h"
 
-GLuint uiVertexShader;
-GLuint uiFragmentShader;
 GLuint uiShaderProgram;
 
 void graphics_reload();
@@ -47,8 +46,6 @@ void graph_init() {
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(0);
 
-    uiVertexShader = glCreateShader(GL_VERTEX_SHADER);
-    uiFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     uiShaderProgram = glCreateProgram();
 }
 
@@ -80,44 +77,6 @@ void graphics_update() {
     glDrawArrays(GL_LINE_STRIP, 0, currentGraphVertexNumber);
     glDrawArrays(GL_LINE_STRIP, currentGraphVertexNumber, graphLength - currentGraphVertexNumber);
     glBindVertexArray(0);
-}
-
-void loadShader(GLuint shader, GLchar *shaderFile) {
-    const GLchar *shaderSource = getShaderSource(shaderFile);
-    glShaderSource(shader, 1, &shaderSource, NULL);
-    glCompileShader(shader);
-    // Check for compile time errors
-    GLint success;
-    GLchar infoLog[512];
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(shader, 512, NULL, infoLog);
-        printf("Shader error (%s):%s\n", shaderFile, infoLog);
-    }
-}
-
-void uiShadersLoad() {
-    // Load vertex shader
-    loadShader(uiVertexShader, "vertexShader.glsl");
-
-    // Load fragment shader
-    loadShader(uiFragmentShader, "fragmentShader.glsl");
-
-    // Link shaders
-    glAttachShader(uiShaderProgram, uiVertexShader);
-    glAttachShader(uiShaderProgram, uiFragmentShader);
-    glLinkProgram(uiShaderProgram);
-
-    // Check for linking errors
-    GLint success;
-    GLchar infoLog[512];
-    glGetProgramiv(uiShaderProgram, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(uiShaderProgram, 512, NULL, infoLog);
-        printf("Shader linking error:%s\n", infoLog);
-    }
-    glDeleteShader(uiVertexShader);
-    glDeleteShader(uiFragmentShader);
 }
 
 void bindPolygons(GLfloat *verts, GLint vertCount, GLint *indic,
@@ -154,7 +113,7 @@ void graphics_setBoatPosition(GLfloat position) {
 }
 
 void graphics_reload() {
-    uiShadersLoad();
+    shader_programInit(uiShaderProgram);
     GLint vertCount = getVectorCountFromFile("vertices.txt");
     GLint indicCount = getVectorCountFromFile("indices.txt");
     GLfloat verts[vertCount * 3];
