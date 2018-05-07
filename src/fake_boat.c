@@ -17,7 +17,7 @@ double clamp(double value, double min, double max) {
 }
 
 void updateBoat(double dt, double motor_force) {
-    position = position + velocity * dt;
+    position = clamp(position + velocity * dt, -1, 1);
     velocity = clamp(velocity + acceleration * dt, -1, 1);
     acceleration = clamp(motor_force, -1, 1);
 }
