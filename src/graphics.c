@@ -49,7 +49,7 @@ void graph_init() {
     uiShaderProgram = glCreateProgram();
 }
 
-void graphics_init(void *(*loadProc)(const char *name)) {
+void graphics_init(void *(*loadProc)(const char)) {
     // Initialize glad, use glfw to retrieve GL function pointers
     gladLoadGLLoader((GLADloadproc) loadProc);
 
