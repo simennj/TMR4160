@@ -18,7 +18,7 @@ add_executable(TMR4160
         src/file_utils.c
         src/window_util.c
         src/pid.c
-        )
+        src/boat.c)
 
 TARGET_LINK_LIBRARIES(TMR4160
         glfw3
