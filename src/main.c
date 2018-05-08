@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
     while (window_open()) {
         clock_gettime(CLOCK_MONOTONIC, &nowTime);
         dt = nowTime.tv_sec - lastTime.tv_sec + (nowTime.tv_nsec - lastTime.tv_nsec) / 1E9;
-        if (dt <= 0) continue;
+        if (dt <= 0.01) continue;
         lastTime = nowTime;
         pid_update(dt);
         graphics_setBoatPosition(pid_getBoatState().position);
