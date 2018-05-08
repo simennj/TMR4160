@@ -9,8 +9,6 @@
 PhidgetRCServoHandle servoHandle;
 PhidgetVoltageInputHandle voltageInputHandle;
 
-double min_voltage, max_voltage, middle_voltage;
-
 static void CCONV
 onVoltageChangeHandler(PhidgetVoltageInputHandle ch, void *ctx, double voltage) {
     printf("Voltage Changed: %.4f\n", voltage);
@@ -38,9 +36,6 @@ int initPhidgetSensor() {
         }
     }
 
-    min_voltage = 3.5;
-    max_voltage = 5;
-    middle_voltage = (min_voltage + max_voltage) / 2;
     res = PhidgetVoltageInput_setOnVoltageChangeHandler(voltageInputHandle, onVoltageChangeHandler, NULL);
     if (res != EPHIDGET_OK) {
         Phidget_getErrorDescription(res, &errs);
@@ -106,10 +101,15 @@ int boat_initPhidget() {
     return 0;
 }
 
+#define V_MAX 5
+#define V_MIN 3.5
+#define V_RADIUS ((V_MAX/V_MIN)/2)
+
 double boat_getPosition() {
     double voltage;
     PhidgetVoltageInput_getVoltage(voltageInputHandle, &voltage);
-    double position = (voltage - middle_voltage) / (min_voltage - max_voltage);
+    // center around 0 with a radius of 1 (range -1 to 1)
+    double position = (V_MAX - voltage) / V_RADIUS - 1;
     printf("calculated position %f\n", position);
     fflush(stdout);
     return position;
