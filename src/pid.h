@@ -3,7 +3,7 @@
 
 void pid_init(double k_p, double k_i, double k_d, double targetPosition, double motorCenter, double motorRadius);
 
-void pid_update();
+void pid_update(double dt);
 
 struct boatState {
     float position;

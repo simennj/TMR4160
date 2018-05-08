@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <time.h>
 #include <stdlib.h>
 #include "pid.h"
 #include "boat.h"
@@ -8,8 +7,6 @@
 double k_p, k_i, k_d;
 double targetPosition;
 double accumulatedDisplacement;
-double dt;
-struct timespec nowTime, lastTime;
 
 double displacement;
 double displacementVelocity;
@@ -26,8 +23,6 @@ void pid_init(double newK_p, double newK_i, double newK_d, double newTargetPosit
     if (phidget) {
         boat_setMotorValues(motorCenter, motorRadius);
     }
-
-    clock_gettime(CLOCK_MONOTONIC, &lastTime);
 }
 
 void init_phidget() {
@@ -49,11 +44,7 @@ void update(double dt, double motorForce) {
     else fakeBoat_update(dt, motorForce);
 }
 
-void pid_update() {
-    clock_gettime(CLOCK_MONOTONIC, &nowTime);
-    dt = nowTime.tv_sec - lastTime.tv_sec + (nowTime.tv_nsec - lastTime.tv_nsec) / 1E9;
-    if (dt <= 0) return;
-    lastTime = nowTime;
+void pid_update(double dt) {
     double last_displacement = displacement;
     displacement = targetPosition - getPosition();
     accumulatedDisplacement = accumulatedDisplacement + displacement * dt;

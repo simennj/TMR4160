@@ -1,7 +1,6 @@
 #include <stdio.h>
-
 #include <GLFW/glfw3.h>
-
+#include "time.h"
 #include "file_utils.h"
 #include "graphics.h"
 #include "window_util.h"
@@ -30,9 +29,16 @@ int main(int argc, char **argv) {
     window_init(key_callback);
     graphics_init(glfwGetProcAddress);
 
+    double dt;
+    struct timespec nowTime, lastTime;
 
+    clock_gettime(CLOCK_MONOTONIC, &lastTime);
     while (window_open()) {
-        pid_update();
+        clock_gettime(CLOCK_MONOTONIC, &nowTime);
+        dt = nowTime.tv_sec - lastTime.tv_sec + (nowTime.tv_nsec - lastTime.tv_nsec) / 1E9;
+        if (dt <= 0) continue;
+        lastTime = nowTime;
+        pid_update(dt);
         graphics_setBoatPosition(pid_getBoatState().position);
         graphics_update();
         window_update();
