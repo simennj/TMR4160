@@ -109,7 +109,9 @@ void graphics_update() {
 
     glUseProgram(graphShaderProgram);
     glBindVertexArray(graphVertexArray);
+    glUniform4f(2, 1.0f, 1.0f, 0.0f, 1.0f);
     glDrawArrays(GL_LINE_STRIP, 0, currentGraphVertexNumber);
+    glUniform4f(2, 0.0f, 1.0f, 1.0f, 1.0f);
     glDrawArrays(GL_LINE_STRIP, currentGraphVertexNumber, graphLength - currentGraphVertexNumber);
     glBindVertexArray(0);
 }

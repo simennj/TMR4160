@@ -1,6 +1,7 @@
-#version 330 core
+#version 430 core
 
+layout(location = 2) uniform vec4 defaultColor;
 out vec4 color;
 void main() {
-    color = vec4(1.0f, 0.0f, 1.0f, 1.0f);
+    color = defaultColor;
 }
