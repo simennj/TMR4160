@@ -8,10 +8,10 @@
 #include "pid.h"
 
 void init_pid() {
-    double k_p, k_i, k_d, targetPosition;
-    loadConstants("constants.txt", &k_p, &k_i, &k_d, &targetPosition);
+    double k_p, k_i, k_d, targetPosition, motorCenter, motorRadius;
+    loadConstants("constants.txt", &k_p, &k_i, &k_d, &targetPosition, &motorCenter, &motorRadius);
     printf("K_p: %lf, K_i: %lf, K_d: %lf\n", k_p, k_i, k_d);
-    pid_init(k_p, k_i, k_d, targetPosition);
+    pid_init(k_p, k_i, k_d, targetPosition, motorCenter, motorRadius);
 }
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode) {

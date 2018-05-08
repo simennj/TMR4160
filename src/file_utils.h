@@ -9,7 +9,12 @@ void getIntVectorFromFile(const char *filename, int count, int *array);
 
 const char *getShaderSource(const char *filename);
 
-int loadConstants(const char *filename, double *k_p, double *k_i, double *k_d, double *targetPosition);
+int loadConstants(
+        const char *filename,
+        double *k_p, double *k_i, double *k_d,
+        double *targetPosition,
+        double *motorCenter, double *motorRadius
+);
 
 char *pathAppend(char *result, int resultSize, const char *path1, const char *path2);
 

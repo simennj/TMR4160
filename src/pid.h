@@ -1,6 +1,8 @@
 #ifndef TMR4160_PID_H
 #define TMR4160_PID_H
-void pid_init(double k_p, double k_i, double k_d, double targetPosition);
+
+void pid_init(double k_p, double k_i, double k_d, double targetPosition, double motorCenter, double motorRadius);
+
 void pid_update();
 
 struct boatState {

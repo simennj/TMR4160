@@ -76,9 +76,14 @@ const char *getShaderSource(const char *filename) {
     return fragmentShaderSource;
 }
 
-int loadConstants(const char *filename, double *k_p, double *k_i, double *k_d, double *targetPosition) {
+int loadConstants(
+        const char *filename,
+        double *k_p, double *k_i, double *k_d,
+        double *targetPosition,
+        double *motorCenter, double *motorRadius
+) {
     FILE *file = fopen(filename, "r");
-    int res = fscanf(file, "%lf %lf %lf %lf", k_p, k_i, k_d, targetPosition);
+    int res = fscanf(file, "%lf %lf %lf %lf %lf %lf", k_p, k_i, k_d, targetPosition, motorCenter, motorRadius);
     fclose(file);
     return res;
 }

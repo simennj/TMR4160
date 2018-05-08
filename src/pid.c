@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <pthread_time.h>
+#include <time.h>
 #include <stdlib.h>
 #include "pid.h"
 #include "boat.h"
@@ -16,11 +16,16 @@ double displacementVelocity;
 double motorForce;
 int phidget = 1;
 
-void pid_init(double newK_p, double newK_i, double newK_d, double newTargetPosition) {
+void pid_init(double newK_p, double newK_i, double newK_d, double newTargetPosition, double motorCenter,
+              double motorRadius) {
     k_p = newK_p;
     k_i = newK_i;
     k_d = newK_d;
     targetPosition = newTargetPosition;
+
+    if (phidget) {
+        boat_setMotorValues(motorCenter, motorRadius);
+    }
 
     clock_gettime(CLOCK_MONOTONIC, &lastTime);
 }
