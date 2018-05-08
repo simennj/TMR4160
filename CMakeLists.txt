@@ -20,6 +20,7 @@ add_executable(TMR4160
         src/window_util.c
         src/shader_util.c
         src/boat.c
+        src/clamp.c
         )
 
 TARGET_LINK_LIBRARIES(TMR4160

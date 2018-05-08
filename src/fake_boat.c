@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "clamp.h"
 #include "fake_boat.h"
 
 double position = .5;
@@ -8,12 +9,6 @@ double acceleration = 0;
 
 double fakeBoat_getPosition() {
     return position;
-}
-
-double clamp(double value, double min, double max) {
-    if (value > max) return max;
-    if (value < min) return min;
-    return value;
 }
 
 void fakeBoat_update(double dt, double motor_force) {
