@@ -19,7 +19,7 @@ add_executable(TMR4160
         src/file_utils.c
         src/window_util.c
         src/shader_util.c
-        )
+        src/boat.c)
 
 TARGET_LINK_LIBRARIES(TMR4160
         glfw3
