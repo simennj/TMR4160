@@ -38,15 +38,6 @@ int main(int argc, char **argv) {
         window_update();
     }
 
-//    int res;
-//    res = initPhidget();
-//    if (res != EXIT_SUCCESS) {
-//        fprintf(stderr, "failed to init phidget\n");
-//        return res;
-//    }
-
-    // unzødvendig å close? https://www.phidgets.com/docs/Phidget_Programming_Basics
-
     return 0;
 }
 
