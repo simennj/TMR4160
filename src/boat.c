@@ -1,4 +1,5 @@
 #include "boat.h"
+#include "clamp.h"
 
 #include <phidget22.h>
 #include <stdio.h>
@@ -8,37 +9,11 @@
 PhidgetRCServoHandle servoHandle;
 PhidgetVoltageInputHandle voltageInputHandle;
 
-int initPhidget();
-
-int initPhidgetSensor();
-
-int initPhidgetMotor();
-
 double min_voltage, max_voltage, middle_voltage;
 
 static void CCONV
 onVoltageChangeHandler(PhidgetVoltageInputHandle ch, void *ctx, double voltage) {
     printf("Voltage Changed: %.4f\n", voltage);
-}
-
-int boat_initPhidget() {
-    int res;
-
-    PhidgetLog_enable(PHIDGET_LOG_INFO, NULL);
-
-    res = initPhidgetSensor();
-    if (res != EXIT_SUCCESS) {
-        fprintf(stderr, "failed to init sensor\n");
-        return res;
-    }
-
-    res = initPhidgetMotor();
-    if (res != EXIT_SUCCESS) {
-        fprintf(stderr, "failed to init motor\n");
-        return res;
-    }
-
-    return 0;
 }
 
 int initPhidgetSensor() {
@@ -111,6 +86,25 @@ int initPhidgetMotor() {
 
     return EXIT_SUCCESS;
 }
+int boat_initPhidget() {
+    int res;
+
+    PhidgetLog_enable(PHIDGET_LOG_INFO, NULL);
+
+    res = initPhidgetSensor();
+    if (res != EXIT_SUCCESS) {
+        fprintf(stderr, "failed to init sensor\n");
+        return res;
+    }
+
+    res = initPhidgetMotor();
+    if (res != EXIT_SUCCESS) {
+        fprintf(stderr, "failed to init motor\n");
+        return res;
+    }
+
+    return 0;
+}
 
 double boat_getPosition() {
     double voltage;
@@ -122,7 +116,9 @@ double boat_getPosition() {
 }
 
 void boat_update(double motor_force) {
-    printf("Motor force received: %f", motor_force);
+    printf("received: %f\t", motor_force);
+    motor_force = clamp(motor_force, -1, 1);
+    printf("used: %f\n", motor_force);
     double motor_input = motor_force * 50 + 119;
     printf("Setting motor input to %f\n", motor_input);
     fflush(stdout);
