@@ -22,7 +22,7 @@ void window_init(void (*key_callback)(GLFWwindow *window, int key, int scancode,
 
     glfwInit();
     // Set required options for GLFW
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 //    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
