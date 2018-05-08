@@ -11,4 +11,6 @@ const char *getShaderSource(const char *filename);
 
 int loadConstants(const char *filename, double *k_p, double *k_i, double *k_d, double *targetPosition);
 
+char *pathAppend(char *result, int resultSize, const char *path1, const char *path2);
+
 #endif //TMR4160_FILE_UTILS_H

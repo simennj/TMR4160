@@ -5,6 +5,12 @@
 
 const int VECTOR_BUFFER_SIZE = 100;
 
+char *pathAppend(char *result, int resultSize, const char *path1, const char *path2) {
+    if (resultSize <= 0) return result;
+    result[0] = '\0';
+    if (strlen(path1) + strlen(path2) + 2 > resultSize) return result;
+    return strcat(strcat(strcpy(result, path1), "/"), path2);
+}
 
 int getVectorCountFromFile(const char *filename) {
     FILE *file = fopen(filename, "r");
