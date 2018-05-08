@@ -113,7 +113,7 @@ void graphics_setBoatPosition(GLfloat position) {
 }
 
 void graphics_reload() {
-    shader_programInit(uiShaderProgram);
+    shader_programInit(uiShaderProgram, ".");
     GLint vertCount = getVectorCountFromFile("vertices.txt");
     GLint indicCount = getVectorCountFromFile("indices.txt");
     GLfloat verts[vertCount * 3];

@@ -19,15 +19,19 @@ void loadFromFile(GLuint shader, const GLchar *shaderFile) {
     }
 }
 
-void shader_programInit(GLuint shaderProgram) {
+void shader_programInit(GLuint shaderProgram, const GLchar *folder) {
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
+
+    int pathBufferSize = 50;
+    char pathBuffer[pathBufferSize];
+
     // Load vertex shader
-    loadFromFile(vertexShader, vertexShaderFile);
+    loadFromFile(vertexShader, pathAppend(pathBuffer, pathBufferSize, folder, vertexShaderFile));
 
     // Load fragment shader
-    loadFromFile(fragmentShader, fragmentShaderFile);
+    loadFromFile(fragmentShader, pathAppend(pathBuffer, pathBufferSize, folder, fragmentShaderFile));
 
     // Link shaders
     glAttachShader(shaderProgram, vertexShader);
