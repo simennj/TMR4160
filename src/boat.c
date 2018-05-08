@@ -121,7 +121,7 @@ double boat_getPosition() {
     return position;
 }
 
-void boat_update(double dt, double motor_force) {
+void boat_update(double motor_force) {
     printf("Motor force received: %f", motor_force);
     double motor_input = motor_force * 50 + 119;
     printf("Setting motor input to %f\n", motor_input);

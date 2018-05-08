@@ -40,7 +40,7 @@ double getPosition() {
 }
 
 void update(double dt, double motorForce) {
-    if (phidget) boat_update(dt, motorForce);
+    if (phidget) boat_update(motorForce);
     else fakeBoat_update(dt, motorForce);
 }
 
