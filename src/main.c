@@ -24,7 +24,7 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 }
 
 int main(int argc, char **argv) {
-
+    init_phidget();
     init_pid();
 
     window_init(key_callback);

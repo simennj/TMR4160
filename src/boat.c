@@ -15,22 +15,13 @@ int initPhidgetSensor();
 int initPhidgetMotor();
 
 double min_voltage, max_voltage, middle_voltage;
-double max_motor = 170, min_motor = 20;
 
 static void CCONV
 onVoltageChangeHandler(PhidgetVoltageInputHandle ch, void *ctx, double voltage) {
     printf("Voltage Changed: %.4f\n", voltage);
-    double position = (voltage - middle_voltage) / (max_voltage - min_voltage);
-    printf("calculated position %f\n", position);
-    double motor_input = position * 150 + 90;
-    printf("Setting motor input to %f\n", motor_input);
-//    fflush(stdout);
-    if (PhidgetRCServo_setTargetPosition(servoHandle, motor_input) != EPHIDGET_OK) {
-        printf("Motor input set to %f\n", motor_input);
-    }
 }
 
-int initPhidget() {
+int boat_initPhidget() {
     int res;
 
     PhidgetLog_enable(PHIDGET_LOG_INFO, NULL);
@@ -119,4 +110,23 @@ int initPhidgetMotor() {
     }
 
     return EXIT_SUCCESS;
+}
+
+double boat_getPosition() {
+    double voltage;
+    PhidgetVoltageInput_getVoltage(voltageInputHandle, &voltage);
+    double position = (voltage - middle_voltage) / (min_voltage - max_voltage);
+    printf("calculated position %f\n", position);
+    fflush(stdout);
+    return position;
+}
+
+void boat_update(double dt, double motor_force) {
+    printf("Motor force received: %f", motor_force);
+    double motor_input = motor_force * 50 + 119;
+    printf("Setting motor input to %f\n", motor_input);
+    fflush(stdout);
+    if (PhidgetRCServo_setTargetPosition(servoHandle, motor_input) != EPHIDGET_OK) {
+        printf("Motor input set to %f\n", motor_input);
+    }
 }

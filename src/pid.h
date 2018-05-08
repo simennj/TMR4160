@@ -10,4 +10,6 @@ struct boatState {
 };
 
 struct boatState pid_getBoatState();
+
+void init_phidget();
 #endif //TMR4160_PID_H

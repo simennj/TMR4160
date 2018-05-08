@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <pthread_time.h>
+#include <stdlib.h>
 #include "pid.h"
-#include "fake_boat.h"
+#include "boat.h"
 
 double k_p, k_i, k_d;
 double targetPosition;
@@ -22,23 +23,31 @@ void pid_init(double newK_p, double newK_i, double newK_d, double newTargetPosit
     clock_gettime(CLOCK_MONOTONIC, &lastTime);
 }
 
+void init_phidget() {
+    int res;
+    res = boat_initPhidget();
+    if (res != EXIT_SUCCESS) {
+        fprintf(stderr, "failed to init phidget\n");
+    }
+}
+
 void pid_update() {
     clock_gettime(CLOCK_MONOTONIC, &nowTime);
     dt = nowTime.tv_sec - lastTime.tv_sec + (nowTime.tv_nsec - lastTime.tv_nsec) / 1E9;
     if (dt <= 0) return;
     lastTime = nowTime;
     double last_displacement = displacement;
-    displacement = targetPosition - getBoatPosition();
+    displacement = targetPosition - boat_getPosition();
     accumulatedDisplacement = accumulatedDisplacement + displacement * dt;
     displacementVelocity = (displacement - last_displacement) / dt;
     motorForce = k_p * displacement + k_i * accumulatedDisplacement + k_d * displacementVelocity;
-    updateBoat(dt, motorForce);
-    printFakeBoatState();
+    boat_update(dt, motorForce);
+//    printFakeBoatState();
 }
 
 struct boatState pid_getBoatState() {
     struct boatState state = {
-            (float) getBoatPosition(),
+            (float) boat_getPosition(),
             (float) displacementVelocity,
             (float) motorForce
     };
