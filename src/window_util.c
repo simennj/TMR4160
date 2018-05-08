@@ -3,7 +3,7 @@
 #include "window_util.h"
 
 const GLuint WIDTH = 800;
-const GLuint HEIGHT = 600;
+const GLuint HEIGHT = 800;
 GLFWwindow *window;
 
 void error_callback(int code, const char *description) {
