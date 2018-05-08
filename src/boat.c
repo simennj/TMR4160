@@ -101,6 +101,13 @@ int boat_initPhidget() {
     return 0;
 }
 
+double motorCenter = 111, motorRadius = 50;
+
+void boat_setMotorValues(double center, double radius) {
+    motorCenter = center;
+    motorRadius = radius;
+}
+
 #define V_MAX 5
 #define V_MIN 3.5
 #define V_RADIUS ((V_MAX/V_MIN)/2)
@@ -119,7 +126,7 @@ void boat_update(double motor_force) {
     printf("received: %f\t", motor_force);
     motor_force = clamp(motor_force, -1, 1);
     printf("used: %f\n", motor_force);
-    double motor_input = motor_force * 50 + 119;
+    double motor_input = motor_force * motorRadius + motorCenter;
     printf("Setting motor input to %f\n", motor_input);
     fflush(stdout);
     if (PhidgetRCServo_setTargetPosition(servoHandle, motor_input) != EPHIDGET_OK) {
