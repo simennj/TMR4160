@@ -25,10 +25,10 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
                 graphics_reload();
                 init_pid();
                 break;
-            case GLFW_KEY_RIGHT:
+            case GLFW_KEY_UP:
                 targetPosition += .1;
                 break;
-            case GLFW_KEY_LEFT:
+            case GLFW_KEY_DOWN:
                 targetPosition -= .1;
                 break;
             default:
