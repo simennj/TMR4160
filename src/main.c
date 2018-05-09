@@ -16,11 +16,24 @@ void init_pid() {
 }
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode) {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GL_TRUE);
-    else if (key == GLFW_KEY_R && action == GLFW_PRESS) {
-        graphics_reload();
-        init_pid();
+    if (action == GLFW_PRESS) {
+        switch (key) {
+            case GLFW_KEY_ESCAPE:
+                glfwSetWindowShouldClose(window, GL_TRUE);
+                break;
+            case GLFW_KEY_R:
+                graphics_reload();
+                init_pid();
+                break;
+            case GLFW_KEY_RIGHT:
+                targetPosition += .1;
+                break;
+            case GLFW_KEY_LEFT:
+                targetPosition -= .1;
+                break;
+            default:
+                break;
+        }
     }
 }
 
@@ -43,7 +56,7 @@ int main(int argc, char **argv) {
         struct pid_state structboatState = pid_update(dt, targetPosition);
         graphics_updateGraph(structboatState.boatPosition, structboatState.estimatedBoatVelocity,
                              structboatState.pidResultForce);
-        graphics_draw(structboatState.boatPosition, targetPosition);
+        graphics_draw(structboatState.boatPosition, (GLfloat) targetPosition);
         window_update();
     }
 
