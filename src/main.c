@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
     init_pid();
 
     window_init(key_callback);
-    graphics_init(glfwGetProcAddress);
+    graphics_init((void *(*)(const char)) glfwGetProcAddress);
 
     double dt;
     struct timespec nowTime, lastTime;
