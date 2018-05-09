@@ -2,7 +2,6 @@
 #include <glad/glad.h>
 #include "file_utils.h"
 #include "shader_util.h"
-#include "clamp.h"
 
 GLuint uiShaderProgram;
 GLuint graphShaderProgram;
@@ -40,12 +39,8 @@ void bindPolygons(GLfloat *verts, GLint vertCount, GLint *indic,
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid *) 0);
     glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER,
-                 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
-
-    glBindVertexArray(
-            0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0); // Unbind VAO
 }
 
 void ui_init() {
@@ -70,7 +65,8 @@ void boat_init() {
     glBindVertexArray(boatVertexArray);
     glGenBuffers(1, &boatVertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, boatVertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6, NULL, GL_DYNAMIC_DRAW);
+    GLfloat boatVertices[6] = {-.05f, -.89f, -.05f, -.99f, .05f, -.94f};
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6, boatVertices, GL_DYNAMIC_DRAW);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(0);
 
@@ -105,7 +101,7 @@ void graphics_init(void *(*loadProc)(const char)) {
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
-void graphics_draw() {
+void graphics_draw(GLfloat boatPosition) {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -115,6 +111,7 @@ void graphics_draw() {
 
     glUseProgram(boatShaderProgram);
     glBindVertexArray(boatVertexArray);
+    glUniform1f(0, boatPosition);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
     glUseProgram(graphShaderProgram);
@@ -144,7 +141,7 @@ void graphics_draw() {
     glBindVertexArray(0);
 }
 
-void updateGraphValues(GLfloat position, GLfloat velocity, GLfloat acceleration) {
+void graphics_updateGraph(GLfloat position, GLfloat velocity, GLfloat acceleration) {
     glBindBuffer(GL_ARRAY_BUFFER, graphVertexBuffer);
 
     GLfloat positionPoint[2] = {MAIN_GRAPH_WIDTH * currentGraphVertexNumber / GRAPH_LENGTH - OTHER_GRAPH_WIDTH,
@@ -163,17 +160,6 @@ void updateGraphValues(GLfloat position, GLfloat velocity, GLfloat acceleration)
                     sizeof(GLfloat) * 2, accelerationPoint);
 
     currentGraphVertexNumber = (currentGraphVertexNumber + 1) % (GRAPH_LENGTH);
-
-//    printf("p: %f, v: %f, a: %f\n", position, velocity, acceleration);
-}
-
-void graphics_updateValues(GLfloat position, GLfloat velocity, GLfloat acceleration) {
-    glBindBuffer(GL_ARRAY_BUFFER, boatVertexBuffer);
-    GLfloat boatVertices[6] = {position - .05f, -.89f, position - .05f, -.99f, position + .05f, -.94f};
-    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 6, boatVertices);
-
-    updateGraphValues((GLfloat) clamp(position, -1, 1), (GLfloat) clamp(velocity, -1, 1),
-                      (GLfloat) clamp(acceleration, -1, 1));
 }
 
 void graphics_reload() {

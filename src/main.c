@@ -39,9 +39,10 @@ int main(int argc, char **argv) {
         if (dt <= 0.01) continue;
         lastTime = nowTime;
         pid_update(dt);
-        graphics_updateValues(pid_getBoatState().position, pid_getBoatState().velocity,
-                              pid_getBoatState().acceleration);
-        graphics_draw();
+        struct boatState structboatState = pid_getBoatState();
+        graphics_updateGraph(structboatState.position, structboatState.velocity,
+                             structboatState.acceleration);
+        graphics_draw(structboatState.position);
         window_update();
     }
 
