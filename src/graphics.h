@@ -7,6 +7,6 @@ void graphics_reload();
 
 void graphics_draw(GLfloat boatPosition, GLfloat targetPosition);
 
-void graphics_updateGraph(GLfloat position, GLfloat velocity, GLfloat acceleration);
+void graphics_updateGraph(GLfloat mainValue, GLfloat otherValues[4]);
 
 #endif //TMR4160_GRAPHICS_H

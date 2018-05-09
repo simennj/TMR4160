@@ -54,8 +54,9 @@ int main(int argc, char **argv) {
         if (dt <= 0.01) continue;
         lastTime = nowTime;
         struct pid_state structboatState = pid_update(dt, targetPosition);
-        graphics_updateGraph(structboatState.boatPosition, structboatState.estimatedBoatVelocity,
-                             structboatState.pidResultForce);
+        float graphValues[4] = {structboatState.pid_pForce, structboatState.pid_iForce, structboatState.pid_dForce,
+                                structboatState.pidResultForce};
+        graphics_updateGraph(structboatState.boatPosition, graphValues);
         graphics_draw(structboatState.boatPosition, (GLfloat) targetPosition);
         window_update();
     }

@@ -46,13 +46,20 @@ struct pid_state pid_update(double dt, double targetPosition) {
     displacement = targetPosition - getPosition();
     accumulatedDisplacement = accumulatedDisplacement + displacement * dt;
     displacementVelocity = (displacement - last_displacement) / dt;
-    motorForce = k_p * displacement + k_i * accumulatedDisplacement + k_d * displacementVelocity;
+
+    double pForce = k_p * displacement;
+    double iForce = k_i * accumulatedDisplacement;
+    double dForce = k_d * displacementVelocity;
+
+    motorForce = pForce + iForce + dForce;
     update(dt, motorForce);
 //    printFakeBoatState();
     struct pid_state state = {
-            (float) getPosition(),
-            (float) displacementVelocity,
-            (float) motorForce,
+            .boatPosition = (float) getPosition(),
+            .pid_pForce = (float) pForce,
+            .pid_iForce = (float) iForce,
+            .pid_dForce = (float) dForce,
+            .pidResultForce = (float) motorForce,
     };
     return state;
 }

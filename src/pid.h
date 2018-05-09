@@ -7,7 +7,9 @@ struct pid_state pid_update(double dt, double targetPosition);
 
 struct pid_state {
     float boatPosition;
-    float estimatedBoatVelocity;
+    float pid_pForce;
+    float pid_iForce;
+    float pid_dForce;
     float pidResultForce;
 };
 

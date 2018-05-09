@@ -147,21 +147,21 @@ void graphics_draw(GLfloat boatPosition, GLfloat targetPosition) {
     glBindVertexArray(0);
 }
 
-void graphics_updateGraph(GLfloat position, GLfloat velocity, GLfloat acceleration) {
+void graphics_updateGraph(GLfloat mainValue, const GLfloat otherValues[4]) {
     glBindBuffer(GL_ARRAY_BUFFER, graphVertexBuffer);
 
     GLfloat positionPoint[2] = {MAIN_GRAPH_WIDTH * currentGraphVertexNumber / GRAPH_LENGTH - OTHER_GRAPH_WIDTH,
-                                MAIN_GRAPH_HEIGHT * (position + .5f)};
+                                MAIN_GRAPH_HEIGHT * (mainValue + .5f)};
     glBufferSubData(GL_ARRAY_BUFFER, sizeof(GLfloat) * currentGraphVertexNumber * 2, sizeof(GLfloat) * 2,
                     positionPoint);
 
     GLfloat velocityPoint[2] = {OTHER_GRAPH_WIDTH * currentGraphVertexNumber / GRAPH_LENGTH - OTHER_GRAPH_WIDTH,
-                                OTHER_GRAPH_HEIGHT * (velocity - 2)};
+                                OTHER_GRAPH_HEIGHT * (otherValues[0] - 2)};
     glBufferSubData(GL_ARRAY_BUFFER, sizeof(GLfloat) * (currentGraphVertexNumber + GRAPH_LENGTH) * 2,
                     sizeof(GLfloat) * 2, velocityPoint);
 
     GLfloat accelerationPoint[2] = {OTHER_GRAPH_WIDTH * currentGraphVertexNumber / GRAPH_LENGTH,
-                                    OTHER_GRAPH_HEIGHT * (acceleration - 2)};
+                                    OTHER_GRAPH_HEIGHT * (otherValues[1] - 2)};
     glBufferSubData(GL_ARRAY_BUFFER, sizeof(GLfloat) * (currentGraphVertexNumber + GRAPH_LENGTH * 2) * 2,
                     sizeof(GLfloat) * 2, accelerationPoint);
 
