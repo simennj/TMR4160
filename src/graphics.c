@@ -125,14 +125,14 @@ void graphics_draw(GLfloat boatPosition, GLfloat targetPosition) {
     glBindVertexArray(graphVertexArray);
 
     glUniform1f(1, MAIN_GRAPH_WIDTH - MAIN_GRAPH_WIDTH * currentGraphVertexNumber / GRAPH_LENGTH);
-    glUniform4f(2, 1.0f, 0.0f, 0.0f, 1.0f);
+    glUniform1i(2, 0);
     glDrawArrays(GL_LINE_STRIP, 0, currentGraphVertexNumber);
     glUniform1f(1, -MAIN_GRAPH_WIDTH * currentGraphVertexNumber / GRAPH_LENGTH);
     glDrawArrays(GL_LINE_STRIP, currentGraphVertexNumber, GRAPH_LENGTH - currentGraphVertexNumber);
 
     for (int i = 0; i < 4; ++i) {
         glUniform1f(1, OTHER_GRAPH_WIDTH - OTHER_GRAPH_WIDTH * currentGraphVertexNumber / GRAPH_LENGTH);
-        glUniform4f(2, 0.0f, 1.0f, 0.0f, 1.0f);
+        glUniform1i(2, i + 1);
         glDrawArrays(GL_LINE_STRIP, GRAPH_LENGTH * (i + 1), currentGraphVertexNumber);
         glUniform1f(1, -OTHER_GRAPH_WIDTH * currentGraphVertexNumber / GRAPH_LENGTH);
         glDrawArrays(GL_LINE_STRIP, currentGraphVertexNumber + GRAPH_LENGTH * (i + 1),
@@ -152,8 +152,6 @@ void graphics_updateGraph(GLfloat mainValue, const GLfloat otherValues[4]) {
 
     for (int i = 0; i < 4; ++i) {
         div_t cell = div(i, 2);
-        printf("%i: %f ", i, otherValues[i]);
-        printf("%i,%i\n", cell.rem, cell.quot);
         point[0] = OTHER_GRAPH_WIDTH * currentGraphVertexNumber / GRAPH_LENGTH - OTHER_GRAPH_WIDTH * cell.rem;
         point[1] = OTHER_GRAPH_HEIGHT * ((float) clamp(otherValues[i], -1, 1) - 1 - 2 * cell.quot);
         glBufferSubData(GL_ARRAY_BUFFER, sizeof(GLfloat) * (currentGraphVertexNumber + GRAPH_LENGTH * (i + 1)) * 2,
