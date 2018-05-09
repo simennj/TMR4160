@@ -5,15 +5,12 @@
 #include "fake_boat.h"
 
 double k_p, k_i, k_d;
-double targetPosition;
 int phidget = 1;
 
-void pid_init(double newK_p, double newK_i, double newK_d, double newTargetPosition, double motorCenter,
-              double motorRadius) {
+void pid_init(double newK_p, double newK_i, double newK_d, double motorCenter, double motorRadius) {
     k_p = newK_p;
     k_i = newK_i;
     k_d = newK_d;
-    targetPosition = newTargetPosition;
 
     if (phidget) {
         boat_setMotorValues(motorCenter, motorRadius);
@@ -39,7 +36,7 @@ void update(double dt, double motorForce) {
     else fakeBoat_update(dt, motorForce);
 }
 
-struct pid_state pid_update(double dt) {
+struct pid_state pid_update(double dt, double targetPosition) {
     static double accumulatedDisplacement;
     static double displacement;
     static double displacementVelocity;
@@ -56,7 +53,6 @@ struct pid_state pid_update(double dt) {
             (float) getPosition(),
             (float) displacementVelocity,
             (float) motorForce,
-            (float) targetPosition
     };
     return state;
 }

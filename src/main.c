@@ -6,11 +6,13 @@
 #include "window_util.h"
 #include "pid.h"
 
+double targetPosition;
+
 void init_pid() {
-    double k_p, k_i, k_d, targetPosition, motorCenter, motorRadius;
+    double k_p, k_i, k_d, motorCenter, motorRadius;
     loadConstants("constants.txt", &k_p, &k_i, &k_d, &targetPosition, &motorCenter, &motorRadius);
     printf("K_p: %lf, K_i: %lf, K_d: %lf\n", k_p, k_i, k_d);
-    pid_init(k_p, k_i, k_d, targetPosition, motorCenter, motorRadius);
+    pid_init(k_p, k_i, k_d, motorCenter, motorRadius);
 }
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode) {
@@ -38,10 +40,10 @@ int main(int argc, char **argv) {
         dt = nowTime.tv_sec - lastTime.tv_sec + (nowTime.tv_nsec - lastTime.tv_nsec) / 1E9;
         if (dt <= 0.01) continue;
         lastTime = nowTime;
-        struct pid_state structboatState = pid_update(dt);
+        struct pid_state structboatState = pid_update(dt, targetPosition);
         graphics_updateGraph(structboatState.boatPosition, structboatState.estimatedBoatVelocity,
-                             structboatState.estimatedBoatAcceleration);
-        graphics_draw(structboatState.boatPosition, structboatState.targetPosition);
+                             structboatState.pidResultForce);
+        graphics_draw(structboatState.boatPosition, targetPosition);
         window_update();
     }
 
