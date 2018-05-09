@@ -6,6 +6,7 @@
 
 GLuint uiShaderProgram;
 GLuint graphShaderProgram;
+GLuint boatShaderProgram;
 
 void graphics_reload();
 
@@ -46,6 +47,7 @@ void bindPolygons(GLfloat *verts, GLint vertCount, GLint *indic,
     glBindVertexArray(
             0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
 }
+
 void ui_init() {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -68,8 +70,8 @@ void boat_init() {
     glBindVertexArray(boatVertexArray);
     glGenBuffers(1, &boatVertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, boatVertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 9, NULL, GL_DYNAMIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6, NULL, GL_DYNAMIC_DRAW);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(0);
 
 }
@@ -85,6 +87,7 @@ void graph_init() {
 
     uiShaderProgram = glCreateProgram();
     graphShaderProgram = glCreateProgram();
+    boatShaderProgram = glCreateProgram();
 }
 
 void graphics_init(void *(*loadProc)(const char)) {
@@ -109,6 +112,8 @@ void graphics_draw() {
     glUseProgram(uiShaderProgram);
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, 0);
+
+    glUseProgram(boatShaderProgram);
     glBindVertexArray(boatVertexArray);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
@@ -159,13 +164,13 @@ void updateGraphValues(GLfloat position, GLfloat velocity, GLfloat acceleration)
 
     currentGraphVertexNumber = (currentGraphVertexNumber + 1) % (GRAPH_LENGTH);
 
-    printf("p: %f, v: %f, a: %f\n", position, velocity, acceleration);
+//    printf("p: %f, v: %f, a: %f\n", position, velocity, acceleration);
 }
 
 void graphics_updateValues(GLfloat position, GLfloat velocity, GLfloat acceleration) {
     glBindBuffer(GL_ARRAY_BUFFER, boatVertexBuffer);
-    GLfloat boatVertices[9] = {position - .05f, -.89f, 0, position - .05f, -.99f, 0, position + .05f, -.94f, 0};
-    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 9, boatVertices);
+    GLfloat boatVertices[6] = {position - .05f, -.89f, position - .05f, -.99f, position + .05f, -.94f};
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 6, boatVertices);
 
     updateGraphValues((GLfloat) clamp(position, -1, 1), (GLfloat) clamp(velocity, -1, 1),
                       (GLfloat) clamp(acceleration, -1, 1));
@@ -174,5 +179,6 @@ void graphics_updateValues(GLfloat position, GLfloat velocity, GLfloat accelerat
 void graphics_reload() {
     shader_programInit(uiShaderProgram, ".");
     shader_programInit(graphShaderProgram, "graph");
+    shader_programInit(boatShaderProgram, "boat");
     ui_load();
 }
