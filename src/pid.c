@@ -13,6 +13,7 @@ void pid_init(double newK_p, double newK_i, double newK_d, double motorCenter, d
     k_d = newK_d;
 
     if (phidget) {
+        boat_toggleMotor();
         boat_setMotorValues(motorCenter, motorRadius);
     }
 }

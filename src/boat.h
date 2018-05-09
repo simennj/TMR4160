@@ -9,4 +9,6 @@ void boat_update(double motor_force);
 
 void boat_setMotorValues(double center, double radius);
 
+int boat_toggleMotor();
+
 #endif //TMR4160_BOAT_H

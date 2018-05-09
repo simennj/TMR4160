@@ -71,16 +71,9 @@ int initPhidgetMotor() {
         }
     }
 
-    PhidgetRCServo_setTargetPosition(servoHandle, 90);
-    printf("Setting engaged\n");
-    res = PhidgetRCServo_setEngaged(servoHandle, 1);
-    if (res != EPHIDGET_OK) {
-        printf("failed to set engaged\n");
-        return EXIT_FAILURE;
-    }
-
     return EXIT_SUCCESS;
 }
+
 int boat_initPhidget() {
     int res;
 
@@ -133,3 +126,17 @@ void boat_update(double motor_force) {
         printf("Motor input set to %f\n", motor_input);
     }
 }
+
+int boat_toggleMotor() {
+    static int enabled = 1;
+    PhidgetRCServo_setTargetPosition(servoHandle, 90);
+    printf("Setting engaged\n");
+    int res = PhidgetRCServo_setEngaged(servoHandle, enabled);
+    if (res != EPHIDGET_OK) {
+        printf("failed to set engaged\n");
+        return EXIT_FAILURE;
+    }
+    enabled = !enabled;
+    return res;
+}
+
