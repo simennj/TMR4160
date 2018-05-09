@@ -20,8 +20,12 @@ GLuint graphVertexArray;
 GLuint graphVertexBuffer;
 
 GLint currentGraphVertexNumber;
-#define graphLength 1000
-
+#define GRAPH_LENGTH 1000
+#define TOTAL_GRAPH_WIDTH 1.99f
+#define MAIN_GRAPH_WIDTH TOTAL_GRAPH_WIDTH
+#define OTHER_GRAPH_WIDTH (TOTAL_GRAPH_WIDTH/2)
+#define MAIN_GRAPH_HEIGHT (2.0f/3)
+#define OTHER_GRAPH_HEIGHT (1.0f/3)
 
 void bindPolygons(GLfloat *verts, GLint vertCount, GLint *indic,
                   GLint indicCount) {// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
@@ -75,7 +79,7 @@ void graph_init() {
     glBindVertexArray(graphVertexArray);
     glGenBuffers(1, &graphVertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, graphVertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * graphLength * 2 * 4, NULL, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * GRAPH_LENGTH * 2 * 4, NULL, GL_DYNAMIC_DRAW);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(0);
 
@@ -111,26 +115,26 @@ void graphics_draw() {
     glUseProgram(graphShaderProgram);
     glBindVertexArray(graphVertexArray);
 
-    glUniform1f(1, 1.99f - 1.99f * currentGraphVertexNumber / graphLength);
+    glUniform1f(1, MAIN_GRAPH_WIDTH - MAIN_GRAPH_WIDTH * currentGraphVertexNumber / GRAPH_LENGTH);
     glUniform4f(2, 1.0f, 0.0f, 0.0f, 1.0f);
     glDrawArrays(GL_LINE_STRIP, 0, currentGraphVertexNumber);
-    glUniform1f(1, -1.99f * currentGraphVertexNumber / graphLength);
+    glUniform1f(1, -MAIN_GRAPH_WIDTH * currentGraphVertexNumber / GRAPH_LENGTH);
     glUniform4f(2, 1.0f, 0.0f, 0.0f, 1.0f);
-    glDrawArrays(GL_LINE_STRIP, currentGraphVertexNumber, graphLength - currentGraphVertexNumber);
+    glDrawArrays(GL_LINE_STRIP, currentGraphVertexNumber, GRAPH_LENGTH - currentGraphVertexNumber);
 
-    glUniform1f(1, 0.99f - 0.99f * currentGraphVertexNumber / graphLength);
+    glUniform1f(1, OTHER_GRAPH_WIDTH - OTHER_GRAPH_WIDTH * currentGraphVertexNumber / GRAPH_LENGTH);
     glUniform4f(2, 0.0f, 1.0f, 0.0f, 1.0f);
-    glDrawArrays(GL_LINE_STRIP, graphLength, currentGraphVertexNumber);
-    glUniform1f(1, -0.99f * currentGraphVertexNumber / graphLength);
+    glDrawArrays(GL_LINE_STRIP, GRAPH_LENGTH, currentGraphVertexNumber);
+    glUniform1f(1, -OTHER_GRAPH_WIDTH * currentGraphVertexNumber / GRAPH_LENGTH);
     glUniform4f(2, 0.0f, 1.0f, 0.0f, 1.0f);
-    glDrawArrays(GL_LINE_STRIP, currentGraphVertexNumber + graphLength, graphLength - currentGraphVertexNumber);
+    glDrawArrays(GL_LINE_STRIP, currentGraphVertexNumber + GRAPH_LENGTH, GRAPH_LENGTH - currentGraphVertexNumber);
 
-    glUniform1f(1, 0.99f - 0.99f * currentGraphVertexNumber / graphLength);
+    glUniform1f(1, OTHER_GRAPH_WIDTH - OTHER_GRAPH_WIDTH * currentGraphVertexNumber / GRAPH_LENGTH);
     glUniform4f(2, 0.0f, 0.0f, 1.0f, 1.0f);
-    glDrawArrays(GL_LINE_STRIP, graphLength * 2, currentGraphVertexNumber);
-    glUniform1f(1, -0.99f * currentGraphVertexNumber / graphLength);
+    glDrawArrays(GL_LINE_STRIP, GRAPH_LENGTH * 2, currentGraphVertexNumber);
+    glUniform1f(1, -OTHER_GRAPH_WIDTH * currentGraphVertexNumber / GRAPH_LENGTH);
     glUniform4f(2, 0.0f, 0.0f, 1.0f, 1.0f);
-    glDrawArrays(GL_LINE_STRIP, currentGraphVertexNumber + graphLength * 2, graphLength - currentGraphVertexNumber);
+    glDrawArrays(GL_LINE_STRIP, currentGraphVertexNumber + GRAPH_LENGTH * 2, GRAPH_LENGTH - currentGraphVertexNumber);
 
     glBindVertexArray(0);
 }
@@ -138,19 +142,22 @@ void graphics_draw() {
 void updateGraphValues(GLfloat position, GLfloat velocity, GLfloat acceleration) {
     glBindBuffer(GL_ARRAY_BUFFER, graphVertexBuffer);
 
-    GLfloat positionPoint[2] = {1.99f * currentGraphVertexNumber / graphLength - .99f, (2 * position + 1) / 3};
+    GLfloat positionPoint[2] = {MAIN_GRAPH_WIDTH * currentGraphVertexNumber / GRAPH_LENGTH - OTHER_GRAPH_WIDTH,
+                                MAIN_GRAPH_HEIGHT * (position + .5f)};
     glBufferSubData(GL_ARRAY_BUFFER, sizeof(GLfloat) * currentGraphVertexNumber * 2, sizeof(GLfloat) * 2,
                     positionPoint);
 
-    GLfloat velocityPoint[2] = {0.99f * currentGraphVertexNumber / graphLength - .99f, (velocity - 2) / 3};
-    glBufferSubData(GL_ARRAY_BUFFER, sizeof(GLfloat) * (currentGraphVertexNumber + graphLength) * 2,
+    GLfloat velocityPoint[2] = {OTHER_GRAPH_WIDTH * currentGraphVertexNumber / GRAPH_LENGTH - OTHER_GRAPH_WIDTH,
+                                OTHER_GRAPH_HEIGHT * (velocity - 2)};
+    glBufferSubData(GL_ARRAY_BUFFER, sizeof(GLfloat) * (currentGraphVertexNumber + GRAPH_LENGTH) * 2,
                     sizeof(GLfloat) * 2, velocityPoint);
 
-    GLfloat accelerationPoint[2] = {0.99f * currentGraphVertexNumber / graphLength, (acceleration - 2) / 3};
-    glBufferSubData(GL_ARRAY_BUFFER, sizeof(GLfloat) * (currentGraphVertexNumber + graphLength * 2) * 2,
+    GLfloat accelerationPoint[2] = {OTHER_GRAPH_WIDTH * currentGraphVertexNumber / GRAPH_LENGTH,
+                                    OTHER_GRAPH_HEIGHT * (acceleration - 2)};
+    glBufferSubData(GL_ARRAY_BUFFER, sizeof(GLfloat) * (currentGraphVertexNumber + GRAPH_LENGTH * 2) * 2,
                     sizeof(GLfloat) * 2, accelerationPoint);
 
-    currentGraphVertexNumber = (currentGraphVertexNumber + 1) % (graphLength);
+    currentGraphVertexNumber = (currentGraphVertexNumber + 1) % (GRAPH_LENGTH);
 
     printf("p: %f, v: %f, a: %f\n", position, velocity, acceleration);
 }
