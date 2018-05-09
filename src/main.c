@@ -39,8 +39,9 @@ int main(int argc, char **argv) {
         if (dt <= 0.01) continue;
         lastTime = nowTime;
         pid_update(dt);
-        graphics_setBoatPosition(pid_getBoatState().position);
-        graphics_update();
+        graphics_updateValues(pid_getBoatState().position, pid_getBoatState().velocity,
+                              pid_getBoatState().acceleration);
+        graphics_draw();
         window_update();
     }
 

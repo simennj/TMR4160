@@ -5,8 +5,8 @@ void graphics_init(void *(*loadProc)(const char));
 
 void graphics_reload();
 
-void graphics_update();
+void graphics_draw();
 
-void graphics_setBoatPosition(float position);
+void graphics_updateValues(GLfloat position, GLfloat velocity, GLfloat acceleration);
 
 #endif //TMR4160_GRAPHICS_H
