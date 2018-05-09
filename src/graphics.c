@@ -23,7 +23,7 @@ GLuint graphVertexBuffer;
 GLint currentGraphVertexNumber;
 #define GRAPH_LENGTH 1000
 #define TOTAL_GRAPH_WIDTH 1.99f
-#define MAIN_GRAPH_WIDTH TOTAL_GRAPH_WIDTH
+#define MAIN_GRAPH_WIDTH 1.9f
 #define OTHER_GRAPH_WIDTH (TOTAL_GRAPH_WIDTH/2)
 #define MAIN_GRAPH_HEIGHT (0.5f)
 #define OTHER_GRAPH_HEIGHT (0.25f)
