@@ -5,13 +5,14 @@ void pid_init(double k_p, double k_i, double k_d, double targetPosition, double 
 
 void pid_update(double dt);
 
-struct boatState {
-    float position;
-    float velocity;
-    float acceleration;
+struct pid_state {
+    float boatPosition;
+    float estimatedBoatVelocity;
+    float estimatedBoatAcceleration;
+    float targetPosition;
 };
 
-struct boatState pid_getBoatState();
+struct pid_state pid_getState();
 
 void init_phidget();
 #endif //TMR4160_PID_H

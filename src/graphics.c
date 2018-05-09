@@ -101,7 +101,7 @@ void graphics_init(void *(*loadProc)(const char)) {
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
-void graphics_draw(GLfloat boatPosition) {
+void graphics_draw(GLfloat boatPosition, GLfloat targetPosition) {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -111,6 +111,8 @@ void graphics_draw(GLfloat boatPosition) {
 
     glUseProgram(boatShaderProgram);
     glBindVertexArray(boatVertexArray);
+    glUniform1f(0, targetPosition);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
     glUniform1f(0, boatPosition);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 

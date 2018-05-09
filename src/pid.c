@@ -55,11 +55,12 @@ void pid_update(double dt) {
 }
 
 
-struct boatState pid_getBoatState() {
-    struct boatState state = {
+struct pid_state pid_getState() {
+    struct pid_state state = {
             (float) getPosition(),
             (float) displacementVelocity,
-            (float) motorForce
+            (float) motorForce,
+            (float) targetPosition
     };
     return state;
 }
