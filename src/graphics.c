@@ -89,6 +89,8 @@ void graph_init() {
 void graphics_init(void *(*loadProc)(const char)) {
     // Initialize glad, use glfw to retrieve GL function pointers
     gladLoadGLLoader((GLADloadproc) loadProc);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     ui_init();
     boat_init();
@@ -111,9 +113,11 @@ void graphics_draw(GLfloat boatPosition, GLfloat targetPosition) {
 
     glUseProgram(boatShaderProgram);
     glBindVertexArray(boatVertexArray);
-    glUniform1f(0, targetPosition);
+    glUniform1f(1, boatPosition);
+    glUniform4f(2, 0.9f, 0.1f, 0.1f, 1.0f);
     glDrawArrays(GL_TRIANGLES, 0, 3);
-    glUniform1f(0, boatPosition);
+    glUniform1f(1, targetPosition);
+    glUniform4f(2, 1.0f, 0.5f, 0.5f, 0.5f);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
     glUseProgram(graphShaderProgram);
