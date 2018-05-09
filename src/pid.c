@@ -6,11 +6,6 @@
 
 double k_p, k_i, k_d;
 double targetPosition;
-double accumulatedDisplacement;
-
-double displacement;
-double displacementVelocity;
-double motorForce;
 int phidget = 1;
 
 void pid_init(double newK_p, double newK_i, double newK_d, double newTargetPosition, double motorCenter,
@@ -44,7 +39,12 @@ void update(double dt, double motorForce) {
     else fakeBoat_update(dt, motorForce);
 }
 
-void pid_update(double dt) {
+struct pid_state pid_update(double dt) {
+    static double accumulatedDisplacement;
+    static double displacement;
+    static double displacementVelocity;
+    static double motorForce;
+
     double last_displacement = displacement;
     displacement = targetPosition - getPosition();
     accumulatedDisplacement = accumulatedDisplacement + displacement * dt;
@@ -52,10 +52,6 @@ void pid_update(double dt) {
     motorForce = k_p * displacement + k_i * accumulatedDisplacement + k_d * displacementVelocity;
     update(dt, motorForce);
 //    printFakeBoatState();
-}
-
-
-struct pid_state pid_getState() {
     struct pid_state state = {
             (float) getPosition(),
             (float) displacementVelocity,

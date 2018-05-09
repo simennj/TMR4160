@@ -38,8 +38,7 @@ int main(int argc, char **argv) {
         dt = nowTime.tv_sec - lastTime.tv_sec + (nowTime.tv_nsec - lastTime.tv_nsec) / 1E9;
         if (dt <= 0.01) continue;
         lastTime = nowTime;
-        pid_update(dt);
-        struct pid_state structboatState = pid_getState();
+        struct pid_state structboatState = pid_update(dt);
         graphics_updateGraph(structboatState.boatPosition, structboatState.estimatedBoatVelocity,
                              structboatState.estimatedBoatAcceleration);
         graphics_draw(structboatState.boatPosition, structboatState.targetPosition);
