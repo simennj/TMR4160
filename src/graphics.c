@@ -146,7 +146,7 @@ void graphics_updateGraph(GLfloat mainValue, const GLfloat otherValues[4]) {
     glBindBuffer(GL_ARRAY_BUFFER, graphVertexBuffer);
 
     GLfloat point[2] = {MAIN_GRAPH_WIDTH * currentGraphVertexNumber / GRAPH_LENGTH - OTHER_GRAPH_WIDTH,
-                                MAIN_GRAPH_HEIGHT * (mainValue + .5f)};
+                        MAIN_GRAPH_HEIGHT * (mainValue + 1.0f)};
     glBufferSubData(GL_ARRAY_BUFFER, sizeof(GLfloat) * currentGraphVertexNumber * 2, sizeof(GLfloat) * 2,
                     point);
 
@@ -155,7 +155,7 @@ void graphics_updateGraph(GLfloat mainValue, const GLfloat otherValues[4]) {
         printf("%i: %f ", i, otherValues[i]);
         printf("%i,%i\n", cell.rem, cell.quot);
         point[0] = OTHER_GRAPH_WIDTH * currentGraphVertexNumber / GRAPH_LENGTH - OTHER_GRAPH_WIDTH * cell.rem;
-        point[1] = OTHER_GRAPH_HEIGHT * ((float) clamp(otherValues[i], -1, 1) - 1 - cell.quot);
+        point[1] = OTHER_GRAPH_HEIGHT * ((float) clamp(otherValues[i], -1, 1) - 1 - 2 * cell.quot);
         glBufferSubData(GL_ARRAY_BUFFER, sizeof(GLfloat) * (currentGraphVertexNumber + GRAPH_LENGTH * (i + 1)) * 2,
                         sizeof(GLfloat) * 2, point);
     }
