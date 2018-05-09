@@ -46,12 +46,19 @@ int main(int argc, char **argv) {
 
     double dt;
     struct timespec nowTime, lastTime;
+    double timeSinceLastWrite = 0;
+
+    clock_gettime(CLOCK_MONOTONIC, &nowTime);
+    char filename[50];
+    sprintf(filename, "%lli.txt", nowTime.tv_sec);
+    FILE *logFIle = fopen(filename, "a");
 
     clock_gettime(CLOCK_MONOTONIC, &lastTime);
     while (window_open()) {
         clock_gettime(CLOCK_MONOTONIC, &nowTime);
         dt = nowTime.tv_sec - lastTime.tv_sec + (nowTime.tv_nsec - lastTime.tv_nsec) / 1E9;
         if (dt <= 0.01) continue;
+        timeSinceLastWrite += dt;
         lastTime = nowTime;
         struct pid_state structboatState = pid_update(dt, targetPosition);
         float graphValues[4] = {structboatState.pid_pForce, structboatState.pid_iForce, structboatState.pid_dForce,
@@ -59,8 +66,14 @@ int main(int argc, char **argv) {
         graphics_updateGraph(structboatState.boatPosition, graphValues);
         graphics_draw(structboatState.boatPosition, (GLfloat) targetPosition);
         window_update();
+        if (timeSinceLastWrite > 0.5f) {
+            fprintf(logFIle, "%f,%f,%f,%f,%f\n", nowTime.tv_sec + nowTime.tv_nsec / 1E9, structboatState.pid_pForce,
+                    structboatState.pid_iForce, structboatState.pid_dForce,
+                    structboatState.pidResultForce);
+            timeSinceLastWrite = 0;
+        }
     }
+    fclose(logFIle);
 
     return 0;
 }
-
