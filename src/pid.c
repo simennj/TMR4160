@@ -5,35 +5,39 @@
 #include "fake_boat.h"
 
 double k_p, k_i, k_d;
-int phidget = 1;
+enum boatUsed {
+    FAKE_BOAT = 0, BOAT = 1, NOT_SET = 2
+};
+enum boatUsed boat = NOT_SET;
 
 void pid_init(double newK_p, double newK_i, double newK_d, double motorCenter, double motorRadius) {
     k_p = newK_p;
     k_i = newK_i;
     k_d = newK_d;
 
-    if (phidget) {
+    if (boat == NOT_SET) {
+        int res;
+        res = boat_init();
+        if (res == EXIT_SUCCESS) {
+            boat = BOAT;
+        } else {
+            fprintf(stderr, "failed to init phidget, using fake boat instead\n");
+            boat = FAKE_BOAT;
+        }
+    }
+    if (boat) {
         boat_toggleMotor();
         boat_setMotorValues(motorCenter, motorRadius);
     }
 }
 
-void init_phidget() {
-    int res;
-    res = boat_initPhidget();
-    if (res != EXIT_SUCCESS) {
-        fprintf(stderr, "failed to init phidget, using fake boat instead\n");
-        phidget = 0;
-    }
-}
-
 double getPosition() {
-    if (phidget) return boat_getPosition();
+    if (boat) return boat_getPosition();
     return fakeBoat_getPosition();
 }
 
 void update(double dt, double motorForce) {
-    if (phidget) boat_update(motorForce);
+    if (boat) boat_update(motorForce);
     else fakeBoat_update(dt, motorForce);
 }
 
