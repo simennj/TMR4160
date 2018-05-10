@@ -39,8 +39,8 @@ void ui_draw() {
 }
 
 void ui_reload() {
-    GLint vertCount = getVectorCountFromFile("vertices.txt");
-    GLint indicCount = getVectorCountFromFile("indices.txt");
+    GLint vertCount = getVectorCountFromFile("ui/vertices.txt");
+    GLint indicCount = getVectorCountFromFile("ui/indices.txt");
     GLfloat verts[vertCount * 3];
     GLint indic[indicCount * 3];
     getFloatVectorFromFile("vertices.txt", vertCount, verts);
@@ -48,5 +48,5 @@ void ui_reload() {
     bindPolygons(verts, vertCount, indic, indicCount);
     uiTrianglesCount = indicCount;
 
-    shader_programInit(uiShaderProgram, ".");
+    shader_programInit(uiShaderProgram, "ui");
 }
