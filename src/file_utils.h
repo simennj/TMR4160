@@ -7,7 +7,7 @@ void getFloatVectorFromFile(const char *filename, int count, float *array);
 
 void getIntVectorFromFile(const char *filename, int count, int *array);
 
-const char *getShaderSource(const char *filename);
+char * getShaderSource(const char *filename);
 
 int loadConstants(
         const char *filename,

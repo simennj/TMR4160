@@ -58,7 +58,7 @@ void getIntVectorFromFile(const char *filename, int count, int *array) {
     fclose(file);
 }
 
-const char *getShaderSource(const char *filename) {
+char *getShaderSource(const char *filename) {
     FILE *f = fopen(filename, "rb");
     char *fragmentShaderSource = 0;
     size_t length;

@@ -6,9 +6,10 @@ const GLchar *vertexShaderFile = "vertexShader.glsl";
 const GLchar *fragmentShaderFile = "fragmentShader.glsl";
 
 void loadFromFile(GLuint shader, const GLchar *shaderFile) {
-    const GLchar *shaderSource = getShaderSource(shaderFile);
+    GLchar *shaderSource = getShaderSource(shaderFile);
     glShaderSource(shader, 1, &shaderSource, NULL);
     glCompileShader(shader);
+    free(shaderSource);
     // Check for compile time errors
     GLint success;
     GLchar infoLog[512];
