@@ -27,7 +27,7 @@ void boat_setMotorValues(double center, double radius) {
  */
 double boat_getPosition() {
     double voltage;
-    voltage = phidget_getVoltage(&voltage);
+    phidget_getVoltage(&voltage);
     // center around 0 with a radius of 1 (range -1 to 1)
     return (V_MAX - voltage) / V_RADIUS - 1;
 }

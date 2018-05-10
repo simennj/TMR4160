@@ -60,9 +60,9 @@ int phidget_init() {
     return 0;
 }
 
-double phidget_getVoltage(double *voltage) {
+double * phidget_getVoltage(double *voltage) {
     PhidgetVoltageInput_getVoltage(voltageInputHandle, voltage);
-    return (*voltage);
+    return voltage;
 }
 
 int phidget_setMotorValue(double motor_input) {

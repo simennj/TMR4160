@@ -7,7 +7,7 @@ int phidget_initSensor();
 
 int phidget_initMotor();
 
-double phidget_getVoltage(double *voltage);
+double * phidget_getVoltage(double *voltage);
 
 int phidget_setMotorValue(double motor_input);
 
