@@ -84,8 +84,7 @@ int main(int argc, char **argv) {
         float graphValues[4] = {structboatState.pid_pForce, structboatState.pid_iForce, structboatState.pid_dForce,
                                 structboatState.pidResultForce};
         // Draw updated values and handle input
-        graphics_updateGraph(structboatState.boatPosition, graphValues);
-        graphics_draw(structboatState.boatPosition, (GLfloat) targetPosition);
+        graphics_draw(structboatState.boatPosition, (GLfloat) targetPosition, graphValues);
         window_update();
         // Give updated values to logger for logging
         logger_update(&structboatState, targetPosition, dt);

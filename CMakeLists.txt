@@ -13,10 +13,13 @@ LINK_DIRECTORIES(external)
 
 add_executable(TMR4160
         src/main.c
+        src/ui.c
         src/pid.c
         src/boat.c
+        src/graph.c
         src/clamp.c
         src/logger.c
+        src/marker.c
         src/graphics.c
         src/fake_boat.c
         src/file_utils.c
