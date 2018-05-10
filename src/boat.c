@@ -9,11 +9,6 @@
 PhidgetRCServoHandle servoHandle;
 PhidgetVoltageInputHandle voltageInputHandle;
 
-static void CCONV
-onVoltageChangeHandler(PhidgetVoltageInputHandle ch, void *ctx, double voltage) {
-    printf("Voltage Changed: %.4f\n", voltage);
-}
-
 int initPhidgetSensor() {
     PhidgetReturnCode res;
     const char *errs;
@@ -34,13 +29,6 @@ int initPhidgetSensor() {
             fprintf(stderr, "failed to open channel:%s\n", errs);
             return EXIT_FAILURE;
         }
-    }
-
-    res = PhidgetVoltageInput_setOnVoltageChangeHandler(voltageInputHandle, onVoltageChangeHandler, NULL);
-    if (res != EPHIDGET_OK) {
-        Phidget_getErrorDescription(res, &errs);
-        fprintf(stderr, "failed to set voltage change handler: %s\n", errs);
-        return EXIT_FAILURE;
     }
 
     return EXIT_SUCCESS;
