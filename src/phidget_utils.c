@@ -65,8 +65,8 @@ double phidget_getVoltage(double *voltage) {
     return (*voltage);
 }
 
-PhidgetReturnCode phidget_setMotorValue(double motor_input) {
+int phidget_setMotorValue(double motor_input) {
     return PhidgetRCServo_setTargetPosition(servoHandle, motor_input);
 }
 
-PhidgetReturnCode phidget_setMotorState(int enabled) { return PhidgetRCServo_setEngaged(servoHandle, enabled); }
+int phidget_setMotorState(int enabled) { return PhidgetRCServo_setEngaged(servoHandle, enabled); }
