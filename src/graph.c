@@ -42,7 +42,7 @@ void graph_init() {
 /*
  * Updates the graph with the new values
  */
-void update(GLfloat mainValue, const GLfloat *otherValues) {
+void graph_update(GLfloat mainValue, const GLfloat *otherValues) {
     glBindBuffer(GL_ARRAY_BUFFER, graphVertexBuffer);
 
     // Calculate x and y position for mainValue and creates a 2D point
@@ -76,7 +76,7 @@ void update(GLfloat mainValue, const GLfloat *otherValues) {
  * Updates and draws the graph with the new values
  */
 void graph_draw(GLfloat boatPosition, const GLfloat *otherValues) {
-    update(boatPosition, otherValues);
+    graph_update(boatPosition, otherValues);
 
     glUseProgram(graphShaderProgram);
     glBindVertexArray(graphVertexArray);
