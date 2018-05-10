@@ -45,18 +45,11 @@ int main(int argc, char **argv) {
     graphics_init((void *(*)(const char)) glfwGetProcAddress);
 
     double dt;
-    struct timespec nowTime, lastTime, startTime;
-    double timeSinceStart = 0;
-    double nextWrite = 0;
-
-    clock_gettime(CLOCK_MONOTONIC, &startTime);
-    char filename[50];
-    sprintf(filename, "%lli.dat", startTime.tv_sec);
-    FILE *logFile = fopen(filename, "w");
-    fprintf(logFile, "#%14s %15s %15s %15s %15s %15s %15s\n", "Timestamp", "Position", "Target Position", "P Force",
-            "I Force", "D Force", "Total Force");
+    struct timespec nowTime, lastTime;
 
     clock_gettime(CLOCK_MONOTONIC, &lastTime);
+    logger_init(lastTime.tv_sec);
+
     while (window_open()) {
         clock_gettime(CLOCK_MONOTONIC, &nowTime);
         dt = nowTime.tv_sec - lastTime.tv_sec + (nowTime.tv_nsec - lastTime.tv_nsec) / 1E9;
@@ -68,16 +61,9 @@ int main(int argc, char **argv) {
         graphics_updateGraph(structboatState.boatPosition, graphValues);
         graphics_draw(structboatState.boatPosition, (GLfloat) targetPosition);
         window_update();
-        timeSinceStart = nowTime.tv_sec - startTime.tv_sec + (nowTime.tv_nsec - startTime.tv_nsec) / 1E9;
-        if (timeSinceStart > nextWrite) {
-            fprintf(logFile, "%15f %15f %15f %15f %15f %15f %15f\n", timeSinceStart,
-                    structboatState.boatPosition, targetPosition,
-                    structboatState.pid_pForce, structboatState.pid_iForce, structboatState.pid_dForce,
-                    structboatState.pidResultForce);
-            nextWrite += .5;
-        }
+        logger_update(&structboatState, targetPosition, dt);
     }
-    fclose(logFile);
+    logger_end();
 
     return 0;
 }
