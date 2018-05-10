@@ -103,4 +103,7 @@ void graph_draw(GLfloat boatPosition, const GLfloat *otherValues) {
     }
 }
 
+/*
+ * Reload graph shader program from file
+ */
 void graph_reload() { shader_programInit(graphShaderProgram, "graph"); }
