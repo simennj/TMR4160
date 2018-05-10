@@ -67,7 +67,7 @@ void boat_init() {
     glGenBuffers(1, &boatVertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, boatVertexBuffer);
     GLfloat boatVertices[4] = {-.05f, .0f, .05f, .0f};
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6, boatVertices, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 4, boatVertices, GL_DYNAMIC_DRAW);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(0);
 
@@ -116,10 +116,10 @@ void graphics_draw(GLfloat boatPosition, GLfloat targetPosition) {
     glBindVertexArray(boatVertexArray);
     glUniform1f(1, boatPosition);
     glUniform4f(2, 0.9f, 0.1f, 0.1f, 1.0f);
-    glDrawArrays(GL_LINES, 0, 3);
+    glDrawArrays(GL_LINES, 0, 2);
     glUniform1f(1, targetPosition);
     glUniform4f(2, 1.0f, 0.5f, 0.5f, 0.5f);
-    glDrawArrays(GL_LINES, 0, 3);
+    glDrawArrays(GL_LINES, 0, 2);
 
     glUseProgram(graphShaderProgram);
     glBindVertexArray(graphVertexArray);
