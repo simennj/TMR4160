@@ -15,6 +15,7 @@ void logger_init(time_t startTimeSeconds) {
 void logger_update(struct pid_state *structboatState, double targetPosition, double dt) {
     static double timeSinceStart = 0, nextWrite = 0;
 
+    // Writes a new line to the file if more than 0.5s has elapsed since last write
     timeSinceStart += dt;
     if (timeSinceStart > nextWrite) {
         fprintf(logFile, "%15f %15f %15f %15f %15f %15f %15f\n", timeSinceStart,
