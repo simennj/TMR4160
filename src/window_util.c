@@ -2,30 +2,34 @@
 #include <stdio.h>
 #include "window_util.h"
 
-const GLuint WIDTH = 800;
-const GLuint HEIGHT = 800;
+// Define window dimensions
+#define WIDTH 800
+#define HEIGHT 800
+
 GLFWwindow *window;
 
+// Create error callback to make debugging easier
 void error_callback(int code, const char *description) {
     printf("%i: ", code);
     printf(description);
     printf("\n");
 }
 
+// Resize viewport with window while keeping aspect ratio
 void resize_callback(GLFWwindow *window, int width, int height) {
     if (height >= width) glViewport(0, (height - width) / 2, width, width);
     else glViewport((width - height) / 2, 0, height, height);
 }
 
 void window_init(void (*key_callback)(GLFWwindow *window, int key, int scancode, int action, int mode)) {
+    // Register error callback as quickly as possible to catch any errors from the start
     glfwSetErrorCallback(error_callback);
 
     glfwInit();
-    // Set required options for GLFW
+    // Set OpenGL version and profile
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-//    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
     // Create a window object
     window = glfwCreateWindow(WIDTH, HEIGHT, "Dynamic Positioning", NULL, NULL);
@@ -40,11 +44,13 @@ void window_init(void (*key_callback)(GLFWwindow *window, int key, int scancode,
     glViewport(0, 0, width, height);
 }
 
+// Update window and handle input
 void window_update() {
     glfwPollEvents();
     glfwSwapBuffers(window);
 }
 
+// Return whether the window is still open or not
 int window_open() {
     return !glfwWindowShouldClose(window);
 }
