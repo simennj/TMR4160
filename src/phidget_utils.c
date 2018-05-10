@@ -9,9 +9,7 @@ PhidgetVoltageInputHandle voltageInputHandle;
 int openChannel(PhidgetHandle handle) {
     PhidgetReturnCode res;
     const char *errs;
-    /*
-    * Open the channel synchronously: waiting a maximum of 5 seconds.
-    */
+    // Open the channel synchronously: waiting a maximum of 5 seconds.
     res = Phidget_openWaitForAttachment(handle, 5000);
     if (res != EPHIDGET_OK) {
         if (res == EPHIDGET_TIMEOUT) {
@@ -60,7 +58,7 @@ int phidget_init() {
     return 0;
 }
 
-double * phidget_getVoltage(double *voltage) {
+double *phidget_getVoltage(double *voltage) {
     PhidgetVoltageInput_getVoltage(voltageInputHandle, voltage);
     return voltage;
 }
