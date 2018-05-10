@@ -44,13 +44,13 @@ void bindPolygons(GLfloat *verts, GLint vertCount, GLint *indic,
     glBindVertexArray(0); // Unbind VAO
 }
 
-void ui_init() {
+void initUI() {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
 }
 
-void ui_load() {
+void loadUI() {
     GLint vertCount = getVectorCountFromFile("vertices.txt");
     GLint indicCount = getVectorCountFromFile("indices.txt");
     GLfloat verts[vertCount * 3];
@@ -61,7 +61,7 @@ void ui_load() {
     triangles = indicCount;
 }
 
-void boat_init() {
+void initBoat() {
     glGenVertexArrays(1, &boatVertexArray);
     glBindVertexArray(boatVertexArray);
     glGenBuffers(1, &boatVertexBuffer);
@@ -73,7 +73,7 @@ void boat_init() {
 
 }
 
-void graph_init() {
+void initGraph() {
     glGenVertexArrays(1, &graphVertexArray);
     glBindVertexArray(graphVertexArray);
     glGenBuffers(1, &graphVertexBuffer);
@@ -93,9 +93,9 @@ void graphics_init(void *(*loadProc)(const char)) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    ui_init();
-    boat_init();
-    graph_init();
+    initUI();
+    initBoat();
+    initGraph();
 
     graphics_reload();
 
@@ -165,5 +165,5 @@ void graphics_reload() {
     shader_programInit(uiShaderProgram, ".");
     shader_programInit(graphShaderProgram, "graph");
     shader_programInit(boatShaderProgram, "boat");
-    ui_load();
+    loadUI();
 }
