@@ -56,8 +56,8 @@ void ui_reload() {
     GLint indicCount = getVectorCountFromFile("ui/indices.txt");
     GLfloat verts[vertCount * VERTEX_COORDINATE_COUNT];
     GLint indic[indicCount * 3]; // 3 vertices per triangle
-    getFloatVectorFromFile("vertices.txt", vertCount, verts);
-    getIntVectorFromFile("indices.txt", indicCount, indic);
+    getFloatVectorFromFile("ui/vertices.txt", vertCount, verts);
+    getIntVectorFromFile("ui/indices.txt", indicCount, indic);
     bindPolygons(verts, vertCount, indic, indicCount);
     uiTrianglesCount = indicCount;
 
