@@ -1,6 +1,6 @@
 #include <glad/glad.h>
 #include "ui.h"
-#include "file_utils.h"
+#include "../file_utils.h"
 #include "shader_util.h"
 
 // Define amount of coordinates per vertex

@@ -2,8 +2,8 @@
 #include <GLFW/glfw3.h>
 #include "time.h"
 #include "file_utils.h"
-#include "graphics.h"
-#include "window_util.h"
+#include "graphics/graphics.h"
+#include "graphics/window_util.h"
 #include "pid.h"
 #include "logger.h"
 

@@ -13,19 +13,19 @@ LINK_DIRECTORIES(external)
 
 add_executable(TMR4160
         src/main.c
-        src/ui.c
         src/pid.c
         src/boat.c
-        src/graph.c
         src/clamp.c
         src/logger.c
-        src/marker.c
-        src/graphics.c
         src/fake_boat.c
         src/file_utils.c
-        src/window_util.c
-        src/shader_util.c
         src/phidget_utils.c
+        src/graphics/ui.c
+        src/graphics/graph.c
+        src/graphics/marker.c
+        src/graphics/graphics.c
+        src/graphics/window_util.c
+        src/graphics/shader_util.c
         )
 
 TARGET_LINK_LIBRARIES(TMR4160

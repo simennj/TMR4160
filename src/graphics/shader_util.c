@@ -1,6 +1,6 @@
 #include <glad/glad.h>
 #include <stdio.h>
-#include "file_utils.h"
+#include "../file_utils.h"
 
 const GLchar *vertexShaderFile = "vertexShader.glsl";
 const GLchar *fragmentShaderFile = "fragmentShader.glsl";
