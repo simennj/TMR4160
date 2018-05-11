@@ -20,6 +20,7 @@ void pid_init(double newK_p, double newK_i, double newK_d, double motorCenter, d
     k_p = newK_p;
     k_i = newK_i;
     k_d = newK_d;
+    accumulatedDisplacement = 0;
 
     // If the boat is not set, try to use the real boat through phidget
     if (boat == NOT_SET) {
