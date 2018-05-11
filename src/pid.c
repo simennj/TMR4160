@@ -4,12 +4,14 @@
 #include "boat.h"
 #include "fake_boat.h"
 
-double k_p, k_i, k_d;
+static double k_p, k_i, k_d;
+
+static double accumulatedDisplacement;
 
 enum boatUsed {
     FAKE_BOAT = 0, BOAT = 1, NOT_SET = 2
 };
-enum boatUsed boat = NOT_SET;
+static enum boatUsed boat = NOT_SET;
 
 /*
  * Initializes the PID controller with the given values
@@ -38,21 +40,20 @@ void pid_init(double newK_p, double newK_i, double newK_d, double motorCenter, d
     }
 }
 
-double getPosition() {
+static double getPosition() {
     if (boat) return boat_getPosition();
     return fakeBoat_getPosition();
 }
 
-void update(double dt, double motorForce) {
+static void update(double dt, double motorForce) {
     if (boat) boat_update(motorForce);
     else fakeBoat_update(dt, motorForce);
 }
 
 struct pid_state pid_update(double dt, double targetPosition) {
-    static double accumulatedDisplacement;
     static double displacement;
-    static double displacementVelocity;
-    static double motorForce;
+    double motorForce;
+    double displacementVelocity;
 
     // Save error from last call
     double last_displacement = displacement;
