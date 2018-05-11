@@ -44,6 +44,7 @@ void boat_update(double motor_force) {
     // Calculate the motor input based on the force wanted and the motor constants
     double motor_input = motor_force * motorRadius + motorCenter;
     printf("Setting motor input to %f\n", motor_input);
+    phidget_setMotorValue(motor_input);
     fflush(stdout);
 }
 
