@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "clamp.h"
+#include "utils/clamp.h"
 #include "fake_boat.h"
 
 double position = .5;

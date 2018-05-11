@@ -15,11 +15,11 @@ add_executable(TMR4160
         src/main.c
         src/pid.c
         src/boat.c
-        src/clamp.c
         src/logger.c
         src/fake_boat.c
-        src/file_utils.c
-        src/phidget_utils.c
+        src/utils/clamp.c
+        src/utils/file_utils.c
+        src/utils/phidget_utils.c
         src/graphics/ui.c
         src/graphics/graph.c
         src/graphics/marker.c

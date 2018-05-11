@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <GLFW/glfw3.h>
 #include "time.h"
-#include "file_utils.h"
+#include "utils/file_utils.h"
 #include "graphics/graphics.h"
 #include "graphics/window_util.h"
 #include "pid.h"

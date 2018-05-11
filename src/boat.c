@@ -1,8 +1,8 @@
 #include "boat.h"
-#include "clamp.h"
+#include "utils/clamp.h"
 
 #include <stdio.h>
-#include "phidget_utils.h"
+#include "utils/phidget_utils.h"
 
 // Defines constants found from testing the potentiometer
 #define V_MAX 5

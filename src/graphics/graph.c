@@ -1,7 +1,7 @@
 #include <glad/glad.h>
 #include "graph.h"
 #include "shader_util.h"
-#include "../clamp.h"
+#include "../utils/clamp.h"
 
 // Define amount of coordinates per vertex
 #define VERTEX_COORDINATE_COUNT 2
